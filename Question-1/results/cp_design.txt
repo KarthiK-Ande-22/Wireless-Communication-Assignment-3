@@ -1,0 +1,26 @@
+Task 1: CP design (N = 512, W = 15.36 MHz, sample period 65.1 ns)
+
+Scenario 1
+  sum of tap powers               : 1.000
+  last non-zero tap, L - 1        : 4 samples = 0.260 us
+  rms delay spread                : 1.05 samples = 68 ns
+  coherence bandwidth 1/(5 tau)   : 2.93 MHz = 98 subcarriers
+  chosen CP length Ncp = L - 1    : 4 samples = 0.260 us
+  OFDM symbol length N + Ncp      : 516 samples = 33.59 us
+  CP overhead Ncp / (N + Ncp)     : 0.78 %
+  slot length 14 (N + Ncp)        : 7224 samples = 470.3 us
+  shortest Ncp with ISI+ICI 10 dB below noise : 4 samples
+  ISI+ICI with NR normal CP (36 samples): 0 (no ISI)
+
+Scenario 2
+  sum of tap powers               : 1.000
+  last non-zero tap, L - 1        : 75 samples = 4.883 us
+  rms delay spread                : 11.48 samples = 747 ns
+  coherence bandwidth 1/(5 tau)   : 0.27 MHz = 9 subcarriers
+  chosen CP length Ncp = L - 1    : 75 samples = 4.883 us
+  OFDM symbol length N + Ncp      : 587 samples = 38.22 us
+  CP overhead Ncp / (N + Ncp)     : 12.78 %
+  slot length 14 (N + Ncp)        : 8218 samples = 535.0 us
+  shortest Ncp with ISI+ICI 10 dB below noise : 69 samples
+  ISI+ICI with NR normal CP (36 samples): -28.9 dB
+
