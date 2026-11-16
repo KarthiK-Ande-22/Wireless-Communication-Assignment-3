@@ -1,0 +1,46 @@
+Scenario 2, Ncp = 4 samples = 0.260 us (L - 1 = 75), SNR = 30 dB
+seeds: data 2026, channel 2028, noise 2029
+
+Signal lengths
+  M = 14 (N + Ncp)                    : 7224
+  length of y, M + L - 1              : 7299
+  CP overhead Ncp / (N + Ncp)         : 0.78 %
+
+(a) Channel
+  ||h||^2 = mean of |H[k]|^2           : 1.0908 (0.38 dB)
+  |H[k]|^2 min                        : -26.00 dB at k = 450
+  |H[k]|^2 max                        : 6.17 dB at k = 301
+  subcarriers with |H[k]|^2 < -10 dB  : 27
+
+(b) Transmitted signal
+  mean |x[m]|^2                       : 1.0000
+  mean |x[m]| (Rayleigh: 0.886)       : 0.8849
+  PAPR = max |x|^2 / mean |x|^2       : 9.55 dB
+
+(c) Equalization
+  Disturbance y~ - H d~ (symbols 1-13, all subcarriers):
+    measured power                    : 1.275e-02 (-18.94 dB)
+    expected 1/SNR + mean D[k]        : 1.444e-02 (-18.41 dB)
+    of which ISI + ICI, mean D[k]     : 1.344e-02
+    mean SINR = ||h||^2 / (1/SNR + D) : 18.78 dB
+  Equalization error |d^ - d~|^2:
+    mean over symbol 7               : 5.430e-02
+    mean over symbols 1-13            : 6.300e-02
+    expected mean_k (1/SNR + D)/|H|^2 : 7.766e-02
+    on the 226 subcarriers with |H|^2 >= 0 dB: 7.611e-03 (expected 8.695e-03)
+  SINR per subcarrier |H|^2 / (1/SNR + D[k]): -10.26 dB to 25.68 dB
+  Symbol errors after a 4-QAM decision:
+    in symbol 7 (512 symbols)        : 4 (expected 3.73)
+    in the slot (7168 symbols)        : 39 (expected 50.70)
+    on 10 different subcarriers k: 216 (-25.9 dB), 217 (-17.6 dB), 227 (-17.9 dB), 228 (-17.2 dB), 266 (-20.2 dB), 267 (-19.5 dB), 392 (-15.1 dB), 449 (-11.8 dB), 450 (-26.0 dB), 451 (-14.5 dB)
+
+  ISI + ICI from each tap with delay l > Ncp:
+     l   |h[l]|^2   l - Ncp   power      share
+     5   0.0937         1   3.66e-04     2.7 %
+    10   0.1430         6   3.35e-03    24.9 %
+    20   0.0234        16   1.46e-03    10.9 %
+    35   0.0066        31   8.05e-04     6.0 %
+    55   0.0349        51   6.95e-03    51.8 %
+    75   0.0018        71   4.95e-04     3.7 %
+  D[k] over the subcarriers           : -22.8 dB to -15.2 dB
+  expected error / noise-only error   : 7.9 dB to 15.0 dB (median 11.2 dB)

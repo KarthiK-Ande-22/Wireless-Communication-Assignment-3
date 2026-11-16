@@ -1,0 +1,35 @@
+Scenario 1, Ncp = 4 samples = 0.260 us (L - 1 = 4), SNR = 30 dB
+seeds: data 2026, channel 2027, noise 2029
+
+Signal lengths
+  M = 14 (N + Ncp)                    : 7224
+  length of y, M + L - 1              : 7228
+  CP overhead Ncp / (N + Ncp)         : 0.78 %
+
+(a) Channel
+  ||h||^2 = mean of |H[k]|^2           : 0.8582 (-0.66 dB)
+  |H[k]|^2 min                        : -6.32 dB at k = 416
+  |H[k]|^2 max                        : 1.77 dB at k = 172
+  subcarriers with |H[k]|^2 < -10 dB  : 0
+
+(b) Transmitted signal
+  mean |x[m]|^2                       : 1.0000
+  mean |x[m]| (Rayleigh: 0.886)       : 0.8849
+  PAPR = max |x|^2 / mean |x|^2       : 9.55 dB
+
+(c) Equalization
+  Disturbance y~ - H d~ (symbols 1-13, all subcarriers):
+    measured power                    : 1.010e-03 (-29.96 dB)
+    expected 1/SNR + mean D[k]        : 1.000e-03 (-30.00 dB)
+    of which ISI + ICI, mean D[k]     : 0.000e+00
+    mean SINR = ||h||^2 / (1/SNR + D) : 29.34 dB
+  Equalization error |d^ - d~|^2:
+    mean over symbol 7               : 1.519e-03
+    mean over symbols 1-13            : 1.522e-03
+    expected mean_k (1/SNR + D)/|H|^2 : 1.519e-03
+    on the 209 subcarriers with |H|^2 >= 0 dB: 8.288e-04 (expected 8.153e-04)
+  SINR per subcarrier |H|^2 / (1/SNR + D[k]): 23.68 dB to 31.77 dB
+  Symbol errors after a 4-QAM decision:
+    in symbol 7 (512 symbols)        : 0 (expected 0.00)
+    in the slot (7168 symbols)        : 0 (expected 0.00)
+    on 0 different subcarriers k: none
