@@ -5,7 +5,7 @@
 Each block is a separate function. Running this file sends a slot through
 the channel without noise and checks that the receiver gets the data back:
 
-    python3 Question-4/receiver.py
+    python3 Task-4/receiver.py
 """
 import sys
 from pathlib import Path
@@ -87,7 +87,7 @@ def detect_symbols(estimates, constellation):
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     PROJECT_ROOT = Path(__file__).resolve().parents[1]
-    for folder in ["", "Question-2", "Question-3"]:
+    for folder in ["", "Task-2", "Task-3"]:
         sys.path.append(str(PROJECT_ROOT / folder))
     from parameters import (CHANNEL_PROFILES, CHANNEL_SEEDS, DATA_SEED, NUM_DATA_SYMBOLS,
                             NUM_OFDM_SYMBOLS, NUM_SUBCARRIERS)

@@ -6,7 +6,7 @@ The taps h[l] ~ CN(0, sigma_l^2) are drawn once and kept for the whole slot.
 Running this file prints the channel realization of both scenarios and checks
 every block:
 
-    python3 Question-3/channel.py
+    python3 Task-3/channel.py
 """
 import sys
 from pathlib import Path
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     for scenario, profile in CHANNEL_PROFILES.items():
         delays, powers = profile["tap_delays"], profile["tap_powers"]
 
-        # The same generator and seed as in Question-5/main.py, so this is
+        # The same generator and seed as in Task-5/main.py, so this is
         # exactly the realization used for the results.
         seed = CHANNEL_SEEDS[scenario]
         taps = channel_taps(delays, powers, np.random.default_rng(seed))

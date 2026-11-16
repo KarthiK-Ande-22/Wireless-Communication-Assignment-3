@@ -13,7 +13,7 @@
 \usepackage[hidelinks]{hyperref}
 
 % Figures are read directly from the output folders of the code
-\graphicspath{{../Question-1/results/}{../Question-5/results/}}
+\graphicspath{{../Task-1/results/}{../Task-5/results/}}
 
 \setlist{itemsep=2pt,topsep=4pt}
 \setlength{\parindent}{0pt}
@@ -104,13 +104,13 @@ OFDM or 5G function is used.
     \toprule
     File & What it does \\
     \midrule
-    \texttt{Question-1/cp\_design.py}  & Task 1: CP length, rms delay spread, and the ISI + ICI power of a too short CP (Sec.~\ref{sec:task1}, App.~\ref{app:interference}). \\
-    \texttt{Question-2/transmitter.py} & Task 2: \texttt{generate\_data}, \texttt{map\_to\_resource\_grid}, \texttt{ofdm\_modulate}, \texttt{add\_cyclic\_prefix} and \texttt{concatenate\_symbols}. \\
-    \texttt{Question-3/channel.py}     & Task 3: \texttt{channel\_taps}, \texttt{frequency\_response}, \texttt{multipath\_channel}. \\
-    \texttt{Question-4/receiver.py}    & Task 4: \texttt{split\_into\_blocks}, \texttt{remove\_cyclic\_prefix}, \texttt{ofdm\_demodulate}, \texttt{equalize}, \texttt{demap\_resource\_grid}; and \texttt{detect\_symbols} (Assignment 2 detector, only to count errors). \\
-    \texttt{Question-5/main.py}        & Task 5: main script. \texttt{main.py -{}-scenario S [-{}-cp Ncp]} runs the link for one scenario and CP length, and makes all figures of Task 5 and a \texttt{summary.txt}. \\
-    \texttt{Question-5/plots.py}       & The figures of Task 5. \\
-    \texttt{Question-5/cp\_sweep.py}   & Extra: the link for every $\Ncp$ from 0 to 80 (Sec.~\ref{sec:sweep}). \\
+    \texttt{Task-1/cp\_design.py}  & Task 1: CP length, rms delay spread, and the ISI + ICI power of a too short CP (Sec.~\ref{sec:task1}, App.~\ref{app:interference}). \\
+    \texttt{Task-2/transmitter.py} & Task 2: \texttt{generate\_data}, \texttt{map\_to\_resource\_grid}, \texttt{ofdm\_modulate}, \texttt{add\_cyclic\_prefix} and \texttt{concatenate\_symbols}. \\
+    \texttt{Task-3/channel.py}     & Task 3: \texttt{channel\_taps}, \texttt{frequency\_response}, \texttt{multipath\_channel}. \\
+    \texttt{Task-4/receiver.py}    & Task 4: \texttt{split\_into\_blocks}, \texttt{remove\_cyclic\_prefix}, \texttt{ofdm\_demodulate}, \texttt{equalize}, \texttt{demap\_resource\_grid}; and \texttt{detect\_symbols} (Assignment 2 detector, only to count errors). \\
+    \texttt{Task-5/main.py}        & Task 5: main script. \texttt{main.py -{}-scenario S [-{}-cp Ncp]} runs the link for one scenario and CP length, and makes all figures of Task 5 and a \texttt{summary.txt}. \\
+    \texttt{Task-5/plots.py}       & The figures of Task 5. \\
+    \texttt{Task-5/cp\_sweep.py}   & Extra: the link for every $\Ncp$ from 0 to 80 (Sec.~\ref{sec:sweep}). \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -201,7 +201,7 @@ I choose the shortest CP that meets \eqref{eq:condition}, $\Ncp = L - 1$ (Table~
 
 \begin{table}[!htb]
   \centering
-  \caption{CP design (\texttt{Question-1/results/cp\_design.txt}). The coherence bandwidth uses the rule of thumb $B_c \approx 1/(5\tau_{\mathrm{rms}})$.}
+  \caption{CP design (\texttt{Task-1/results/cp\_design.txt}). The coherence bandwidth uses the rule of thumb $B_c \approx 1/(5\tau_{\mathrm{rms}})$.}
   \label{tab:cp}
   \begin{tabular}{lcc}
     \toprule
@@ -266,7 +266,7 @@ interference of $-28.9$ dB, as large as the noise (Fig.~\ref{fig:interference}).
 \section{Task 2 --- Transmitter}
 % =====================================================================
 
-The transmitter (\texttt{Question-2/transmitter.py}) has one function per block of Fig.~2 of the assignment.
+The transmitter (\texttt{Task-2/transmitter.py}) has one function per block of Fig.~2 of the assignment.
 \begin{enumerate}[label=(\alph*)]
   \item \textbf{Data generation} (\texttt{generate\_data}): 7168 indices drawn uniformly from
         $\{0, 1, 2, 3\}$ select the 4-QAM points. Since $|s[n]| = 1$, the average energy is exactly 1.
@@ -286,7 +286,7 @@ measured average power is 1.0000 (Scenario 1, 4 CP samples) and 0.9946 (Scenario
 \section{Task 3 --- Channel}
 % =====================================================================
 
-The channel is in \texttt{Question-3/channel.py}.
+The channel is in \texttt{Task-3/channel.py}.
 \begin{itemize}
   \item \texttt{channel\_taps}: a vector of length $L$ = largest delay + 1 (5 in Scenario 1, 76 in
         Scenario 2). It is zero except at the taps of Table 1 of the assignment, where
@@ -299,7 +299,7 @@ Table~\ref{tab:taps} gives the realization of each scenario.
 
 \begin{table}[!htb]
   \centering
-  \caption{Channel realizations (\texttt{Question-3/results/channel\_check.txt}), channel seed 2027 (Scenario 1) and 2028 (Scenario 2). All other taps are zero.}
+  \caption{Channel realizations (\texttt{Task-3/results/channel\_check.txt}), channel seed 2027 (Scenario 1) and 2028 (Scenario 2). All other taps are zero.}
   \label{tab:taps}
   \small
   \begin{tabular}[t]{rccc}
@@ -343,7 +343,7 @@ tap 55 has 3.9 times its average power; this matters in Task 5(d).
 \section{Task 4 --- Receiver}
 % =====================================================================
 
-The receiver (\texttt{Question-4/receiver.py}) has one function per block of Fig.~3 of the assignment.
+The receiver (\texttt{Task-4/receiver.py}) has one function per block of Fig.~3 of the assignment.
 \begin{enumerate}[label=(\alph*)]
   \item \textbf{OFDM demodulation}: \texttt{split\_into\_blocks} reshapes the first $14(N + \Ncp)$
         samples of $y$ into 14 columns $y_i$; \texttt{remove\_cyclic\_prefix} drops the first $\Ncp$
@@ -381,7 +381,7 @@ so the expected number of errors in a slot is $14 \sum_k P_e(\SNR_k)$.
 \section{Task 5 --- Results}
 % =====================================================================
 
-All figures are made by \texttt{python3 Question-5/main.py -{}-scenario S [-{}-cp Ncp]}. Every run sends
+All figures are made by \texttt{python3 Task-5/main.py -{}-scenario S [-{}-cp Ncp]}. Every run sends
 the same data. In the plots of (c), OFDM symbol $i = 7$ is shown, and the colour of each point is
 $|H[k]|^2$ of its subcarrier (the same colour scale for $\yt_7$ and $\deq_7$). All equalized plots
 use the same axes. Each scenario also has one extra figure: the error $|\deq_i[k] - \dt_i[k]|^2$ on
@@ -855,7 +855,7 @@ and averaging over the channel ($\E|h[\ell]|^2 = \sigma_\ell^2$) gives \eqref{eq
         Fig.~\ref{fig:short-error}), and treating $\tilde{e}_i$ as Gaussian, $\SNR_k$ in \eqref{eq:ser} becomes the
         SINR $|H[k]|^2 / (1/\SNR + D[k])$.
 \end{itemize}
-\texttt{interference\_power\_per\_subcarrier} in \texttt{Question-1/cp\_design.py} computes \eqref{eq:dk}
+\texttt{interference\_power\_per\_subcarrier} in \texttt{Task-1/cp\_design.py} computes \eqref{eq:dk}
 with one FFT per $q$. The check in Sec.~\ref{sec:short} confirms it: over 200 noise-free slots of random
 data, the measured ISI + ICI power is within 0.23\% of $\bar{D}$.
 

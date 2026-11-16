@@ -1,11 +1,11 @@
 """Task 5: main script. Sends one slot through the OFDM link of Tasks 2-4 for
 a given scenario and CP length, and makes all figures of Task 5 (a)-(c).
 
-    python3 Question-5/main.py --scenario 1            # CP designed in Task 1
-    python3 Question-5/main.py --scenario 2
-    python3 Question-5/main.py --scenario 2 --cp 4     # Task 5(d)
+    python3 Task-5/main.py --scenario 1            # CP designed in Task 1
+    python3 Task-5/main.py --scenario 2
+    python3 Task-5/main.py --scenario 2 --cp 4     # Task 5(d)
 
-Figures and a summary of all numbers go to Question-5/results/scenario<S>_cp<Ncp>/.
+Figures and a summary of all numbers go to Task-5/results/scenario<S>_cp<Ncp>/.
 """
 import argparse
 import sys
@@ -17,7 +17,7 @@ from scipy.special import erfc
 
 # The blocks of the link are in the folders of Tasks 1-4; make them importable
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-for folder in ["", "Question-1", "Question-2", "Question-3", "Question-4"]:
+for folder in ["", "Task-1", "Task-2", "Task-3", "Task-4"]:
     sys.path.append(str(PROJECT_ROOT / folder))
 
 from parameters import (CHANNEL_PROFILES, CHANNEL_SEEDS, DATA_SEED, NOISE_SEED,

@@ -13,18 +13,18 @@ for one slot of 14 OFDM symbols with N = 512 subcarriers (W = 15.36 MHz,
 
 | Task | Topic | Code |
 |:---:|---|---|
-| 1 | CP length design | [Question-1/cp_design.py](Question-1/cp_design.py) |
-| 2 | OFDM transmitter | [Question-2/transmitter.py](Question-2/transmitter.py) |
-| 3 | Multipath channel | [Question-3/channel.py](Question-3/channel.py) |
-| 4 | OFDM receiver | [Question-4/receiver.py](Question-4/receiver.py) |
-| 5 | Results (main script) | [Question-5/main.py](Question-5/main.py), [Question-5/cp_sweep.py](Question-5/cp_sweep.py) |
+| 1 | CP length design | [Task-1/cp_design.py](Task-1/cp_design.py) |
+| 2 | OFDM transmitter | [Task-2/transmitter.py](Task-2/transmitter.py) |
+| 3 | Multipath channel | [Task-3/channel.py](Task-3/channel.py) |
+| 4 | OFDM receiver | [Task-4/receiver.py](Task-4/receiver.py) |
+| 5 | Results (main script) | [Task-5/main.py](Task-5/main.py), [Task-5/cp_sweep.py](Task-5/cp_sweep.py) |
 
 ## Results at a glance
 
 <p align="center">
-  <img src="Question-5/results/scenario2_cp75/frequency_response.png" width="32%" alt="Scenario 2: frequency response">
-  <img src="Question-5/results/scenario2_cp75/equalized_symbols.png" width="32%" alt="Scenario 2, Ncp = 75: equalized symbols">
-  <img src="Question-5/results/scenario2_cp4/equalized_symbols.png" width="32%" alt="Scenario 2, Ncp = 4: equalized symbols">
+  <img src="Task-5/results/scenario2_cp75/frequency_response.png" width="32%" alt="Scenario 2: frequency response">
+  <img src="Task-5/results/scenario2_cp75/equalized_symbols.png" width="32%" alt="Scenario 2, Ncp = 75: equalized symbols">
+  <img src="Task-5/results/scenario2_cp4/equalized_symbols.png" width="32%" alt="Scenario 2, Ncp = 4: equalized symbols">
 </p>
 
 Scenario 2: frequency response (left), and the equalized symbols of OFDM symbol 7 with the
@@ -46,18 +46,18 @@ cd Report && pdflatex report.tex && pdflatex report.tex     # the report
 `run_all.sh` runs these commands, which can also be run one by one:
 
 ```bash
-python3 Question-1/cp_design.py                  # Task 1: CP design
-python3 Question-2/transmitter.py                # Task 2: transmitter check
-python3 Question-3/channel.py                    # Task 3: channel realizations and check
-python3 Question-4/receiver.py                   # Task 4: receiver check (no noise)
-python3 Question-5/main.py --scenario 1          # Task 5 (a)-(c), Scenario 1, Ncp = 4
-python3 Question-5/main.py --scenario 2          # Task 5 (a)-(c), Scenario 2, Ncp = 75
-python3 Question-5/main.py --scenario 2 --cp 4   # Task 5 (d), Scenario 2, Ncp = 4
-python3 Question-5/cp_sweep.py                   # extra: every Ncp from 0 to 80
+python3 Task-1/cp_design.py                  # Task 1: CP design
+python3 Task-2/transmitter.py                # Task 2: transmitter check
+python3 Task-3/channel.py                    # Task 3: channel realizations and check
+python3 Task-4/receiver.py                   # Task 4: receiver check (no noise)
+python3 Task-5/main.py --scenario 1          # Task 5 (a)-(c), Scenario 1, Ncp = 4
+python3 Task-5/main.py --scenario 2          # Task 5 (a)-(c), Scenario 2, Ncp = 75
+python3 Task-5/main.py --scenario 2 --cp 4   # Task 5 (d), Scenario 2, Ncp = 4
+python3 Task-5/cp_sweep.py                   # extra: every Ncp from 0 to 80
 ```
 
 The main script takes the scenario and the CP length as arguments:
-`python3 Question-5/main.py --scenario S [--cp NCP]`. Without `--cp` it uses
+`python3 Task-5/main.py --scenario S [--cp NCP]`. Without `--cp` it uses
 the CP length designed in Task 1 (Ncp = L - 1).
 
 ## Random seeds
@@ -91,14 +91,14 @@ No built-in OFDM or 5G function is used.
 
 | Command | Reproduces | Output folder | Time |
 |---|---|---|---:|
-| `python3 Question-1/cp_design.py` | Task 1: CP design table and interference figure | `Question-1/results/` | ~2 s |
-| `python3 Question-2/transmitter.py` | Task 2: check of every transmitter block | `Question-2/results/` | <1 s |
-| `python3 Question-3/channel.py` | Task 3: channel realizations and checks | `Question-3/results/` | ~2 s |
-| `python3 Question-4/receiver.py` | Task 4: noise-free loopback check | `Question-4/results/` | <1 s |
-| `python3 Question-5/main.py --scenario 1` | Task 5 (a)-(c), Scenario 1 | `Question-5/results/scenario1_cp4/` | ~5 s |
-| `python3 Question-5/main.py --scenario 2` | Task 5 (a)-(c), Scenario 2 | `Question-5/results/scenario2_cp75/` | ~5 s |
-| `python3 Question-5/main.py --scenario 2 --cp 4` | Task 5 (d) | `Question-5/results/scenario2_cp4/` | ~4 s |
-| `python3 Question-5/cp_sweep.py` | extra: Ncp from 0 to 80, check of the ISI formula | `Question-5/results/cp_sweep/` | ~2 s |
+| `python3 Task-1/cp_design.py` | Task 1: CP design table and interference figure | `Task-1/results/` | ~2 s |
+| `python3 Task-2/transmitter.py` | Task 2: check of every transmitter block | `Task-2/results/` | <1 s |
+| `python3 Task-3/channel.py` | Task 3: channel realizations and checks | `Task-3/results/` | ~2 s |
+| `python3 Task-4/receiver.py` | Task 4: noise-free loopback check | `Task-4/results/` | <1 s |
+| `python3 Task-5/main.py --scenario 1` | Task 5 (a)-(c), Scenario 1 | `Task-5/results/scenario1_cp4/` | ~5 s |
+| `python3 Task-5/main.py --scenario 2` | Task 5 (a)-(c), Scenario 2 | `Task-5/results/scenario2_cp75/` | ~5 s |
+| `python3 Task-5/main.py --scenario 2 --cp 4` | Task 5 (d) | `Task-5/results/scenario2_cp4/` | ~4 s |
+| `python3 Task-5/cp_sweep.py` | extra: Ncp from 0 to 80, check of the ISI formula | `Task-5/results/cp_sweep/` | ~2 s |
 
 Each run of `main.py` writes six figures (`channel_taps`, `frequency_response`,
 `transmitted_signal`, `received_symbols`, `equalized_symbols`,
@@ -114,19 +114,19 @@ Each run of `main.py` writes six figures (`channel_taps`, `frequency_response`,
 ├── parameters.py                Table 1 (channels), Table 2 (system), random seeds
 ├── plot_style.py                common figure style
 ├── run_all.sh                   runs all tasks
-├── Question-1/
+├── Task-1/
 │   └── cp_design.py             Task 1: CP length, ISI + ICI power of a short CP
-├── Question-2/
+├── Task-2/
 │   └── transmitter.py           Task 2: data, grid mapping, IDFT, CP, concatenation
-├── Question-3/
+├── Task-3/
 │   └── channel.py               Task 3: tap realization, H[k], convolution + noise
-├── Question-4/
+├── Task-4/
 │   └── receiver.py              Task 4: split, remove CP, DFT, equalizer, demapping
-├── Question-5/
+├── Task-5/
 │   ├── main.py                  Task 5: main script for one scenario and CP length
 │   ├── plots.py                 the figures of Task 5
 │   └── cp_sweep.py              extra: link for every Ncp from 0 to 80
-│   (each Question-N/results/ folder holds the outputs of that task)
+│   (each Task-N/results/ folder holds the outputs of that task)
 └── Report/
     ├── report.tex
     └── report.pdf

@@ -10,7 +10,7 @@ Then every sample inside the DFT window only sees the current OFDM symbol
 This script prints and saves the CP design of both scenarios, and plots the
 ISI + ICI power that would remain if the CP were shorter than L - 1.
 
-Run from the project root:   python3 Question-1/cp_design.py
+Run from the project root:   python3 Task-1/cp_design.py
 """
 import sys
 from pathlib import Path

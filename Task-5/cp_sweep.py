@@ -6,13 +6,13 @@
      - the power of the disturbance y~ - H d~ (noise + ISI + ICI) over the
        OFDM symbols 1-13 and all subcarriers, and
      - the number of symbol errors in the slot,
-   and compares them with the expected values from Question-1/cp_design.py.
+   and compares them with the expected values from Task-1/cp_design.py.
 
 2. Check of the ISI + ICI formula. Scenario 2, Ncp = 4, no noise, 200 slots
    with different random data: the measured ISI + ICI power is compared with
    D[k] on every subcarrier.
 
-    python3 Question-5/cp_sweep.py
+    python3 Task-5/cp_sweep.py
 """
 import numpy as np
 import matplotlib.pyplot as plt

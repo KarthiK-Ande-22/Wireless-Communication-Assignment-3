@@ -4,7 +4,7 @@
 
 Each block is a separate function. Running this file checks every block:
 
-    python3 Question-2/transmitter.py
+    python3 Task-2/transmitter.py
 """
 import sys
 from pathlib import Path
