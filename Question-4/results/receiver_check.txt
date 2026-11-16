@@ -1,0 +1,9 @@
+Task 4: receiver check without noise (y~ should equal H d~ exactly)
+
+Scenario 1, Ncp =  4: max |y~ - H d~| = 1.03e-15,  max |s^ - s| = 1.36e-15
+Scenario 1, Ncp =  3: max |y~ - H d~| = 1.22e-02,  max |s^ - s| = 2.52e-02
+
+Scenario 2, Ncp = 75: max |y~ - H d~| = 1.40e-15,  max |s^ - s| = 6.71e-15
+Scenario 2, Ncp = 74: max |y~ - H d~| = 5.02e-03,  max |s^ - s| = 1.00e-01
+
+max |fft / sqrt(N) - F y_c| = 4.76e-13
