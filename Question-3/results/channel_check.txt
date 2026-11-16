@@ -1,0 +1,35 @@
+Task 3: channel realizations
+
+Scenario 1: L = 5 taps, channel seed 2027
+   tap l   sigma_l^2   h[l]                 |h[l]|^2
+       0       0.539   +0.0576 -0.0435j     0.0052
+       1       0.271   -0.2960 -0.7922j     0.7152
+       2       0.136   +0.3160 -0.1257j     0.1157
+       4       0.054   -0.0320 -0.1451j     0.0221
+   channel energy ||h||^2           : 0.8582
+   mean of |H[k]|^2 over k          : 0.8582  (equal to ||h||^2, Parseval)
+   max |fft(h, N) - sum formula|    : 1.21e-15
+   |H[k]|^2 min / max               : -6.32 dB (k = 416) / 1.77 dB (k = 172)
+   subcarriers with |H[k]|^2 < -10 dB: 0
+   E|h[l]|^2 over 20000 draws      : 0.536 0.271 0.136 0.054
+
+Scenario 2: L = 76 taps, channel seed 2028
+   tap l   sigma_l^2   h[l]                 |h[l]|^2
+       0       0.277   -0.0892 +0.4362j     0.1983
+       2       0.219   -0.4915 -0.5895j     0.5890
+       5       0.174   -0.2786 +0.1270j     0.0937
+      10       0.138   -0.1501 +0.3471j     0.1430
+      20       0.110   +0.0394 +0.1479j     0.0234
+      35       0.069   +0.0279 +0.0766j     0.0066
+      55       0.009   +0.0243 -0.1852j     0.0349
+      75       0.004   +0.0070 +0.0417j     0.0018
+   channel energy ||h||^2           : 1.0908
+   mean of |H[k]|^2 over k          : 1.0908  (equal to ||h||^2, Parseval)
+   max |fft(h, N) - sum formula|    : 1.23e-14
+   |H[k]|^2 min / max               : -26.00 dB (k = 450) / 6.17 dB (k = 301)
+   subcarriers with |H[k]|^2 < -10 dB: 27
+   E|h[l]|^2 over 20000 draws      : 0.278 0.220 0.173 0.138 0.109 0.068 0.009 0.004
+
+Convolution and noise
+   length of y for M = 1000, L = 3  : 1002  (M + L - 1 = 1002)
+   measured noise variance x SNR    : 0.9960  (should be 1)
