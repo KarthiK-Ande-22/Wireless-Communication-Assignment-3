@@ -201,8 +201,7 @@ The condition is
 \subsection{Design}
 
 I choose the shortest CP that meets \eqref{eq:condition}, $\Ncp = L - 1$ (Table~\ref{tab:cp}). As the
-task requires, the same $\Ncp$ is used for all 14 OFDM symbols of the slot. (NR makes the first symbol of
-every 0.5 ms slightly longer; this is not modelled here.)
+task requires, the same $\Ncp$ is used for all 14 OFDM symbols of the slot.
 
 \begin{table}[!htb]
   \centering
@@ -213,16 +212,12 @@ every 0.5 ms slightly longer; this is not modelled here.)
     & Scenario 1 & Scenario 2 \\
     \midrule
     Last non-zero tap $L - 1$                    & 4 samples          & 75 samples \\
-    Maximum delay $(L-1)/W$                      & 0.260 $\mu$s       & 4.883 $\mu$s \\
     rms delay spread $\tau_{\mathrm{rms}}$       & 1.05 samples = 68 ns & 11.48 samples = 747 ns \\
     Coherence bandwidth $B_c$                    & 2.93 MHz $\approx$ 98 subcarriers & 0.27 MHz $\approx$ 9 subcarriers \\
     \midrule
     \textbf{CP length $\Ncp$ (samples)}          & \textbf{4}         & \textbf{75} \\
     \textbf{CP length $\Ncp/W$ ($\mu$s)}         & \textbf{0.260}     & \textbf{4.883} \\
     \textbf{CP overhead $\Ncp/(N + \Ncp)$}       & \textbf{0.78\%}    & \textbf{12.78\%} \\
-    \midrule
-    OFDM symbol with CP, $N + \Ncp$              & 516 samples = 33.59 $\mu$s & 587 samples = 38.22 $\mu$s \\
-    Slot, $M = 14(N + \Ncp)$                     & 7224 samples = 470.3 $\mu$s & 8218 samples = 535.0 $\mu$s \\
     \bottomrule
   \end{tabular}
 \end{table}
