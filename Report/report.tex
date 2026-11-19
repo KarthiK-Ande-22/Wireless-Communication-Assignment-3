@@ -277,11 +277,10 @@ nothing: the SINR is already 30 dB (Fig.~\ref{fig:interference}(b)). It only cos
 0.78\% (0.03 dB) in Scenario 1 and 12.78\% (0.59 dB) in Scenario 2. A real system would add a few
 samples of margin for timing errors and filter tails.
 
-\textbf{Check by simulation.} \texttt{cp\_design.py} also sends slots through the transmitter, channel
-and receiver of Tasks 2--4 without noise, for 1000 random channel realizations (seed 2030) and 6
-(Scenario 1) and 15 (Scenario 2) CP lengths. The measured ISI + ICI power agrees with \eqref{eq:pint}
-within 2.6\% at every simulated $\Ncp$, and the SINR within 0.1 dB; at $\Ncp \ge L - 1$ the measured
-power is $10^{-31}$, i.e.\ zero up to rounding errors (markers in Fig.~\ref{fig:interference}(a) and (b)).
+\textbf{Check by simulation.} The markers in Fig.~\ref{fig:interference} are measured by sending
+noise-free slots through the transmitter, channel and receiver of Tasks 2--4 over 1000 random channels.
+They agree with \eqref{eq:pint} within 2.6\% (SINR within 0.1 dB), and for $\Ncp \ge L - 1$ the measured
+interference is zero.
 
 \begin{figure}[!htb]
   \centering
