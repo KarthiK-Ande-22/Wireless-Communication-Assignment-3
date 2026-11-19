@@ -697,19 +697,18 @@ not worth it: it costs 11.6 dB of mean SINR and turns 1 symbol error into 39.
 % =====================================================================
 
 \begin{itemize}
-  \item \textbf{CP design (Task 1):} $\Ncp = L - 1$, the delay of the last tap. Scenario 1: 4 samples =
-        0.260 $\mu$s, overhead 0.78\%. Scenario 2: 75 samples = 4.883 $\mu$s, overhead 12.78\%.
-  \item \textbf{Link (Tasks 2--4):} every block is a separate function and was checked on its own. Without
-        noise the receiver gets the data back to $10^{-15}$ with the designed CP, and not with a CP one
-        sample shorter.
-  \item \textbf{Results (Task 5a--c):} with the designed CP each subcarrier is a flat channel,
-        $\yt = H\dt + \wt$. After the equalizer the error on subcarrier $k$ has variance
-        $1/(\SNR|H[k]|^2)$, so the spread grows on faded subcarriers. Scenario 1 (smooth channel,
-        $-6.3$ to $+1.8$ dB) has no errors; Scenario 2 (deep fades down to $-26$ dB) has 1 error, on the
-        deepest fade.
-  \item \textbf{Too short CP (Task 5d):} with $\Ncp = 4$ in Scenario 2, ISI and ICI add an error 13 times
-        the noise power. The clusters widen on every subcarrier, the mean SINR falls by 11.6 dB, and the
-        symbol errors rise from 1 to 39.
+  \item \textbf{CP length (Task 1):} the CP must be as long as the channel, so $\Ncp = L - 1$. This is
+        4 samples (0.260 $\mu$s, 0.78\% overhead) in Scenario 1 and 75 samples (4.883 $\mu$s, 12.78\%
+        overhead) in Scenario 2.
+  \item \textbf{Link (Tasks 2--4):} each block is one function. Without noise, the receiver gets the data
+        back exactly with this CP, but not with a CP one sample shorter.
+  \item \textbf{Results (Task 5a--c):} with this CP, each subcarrier only sees one gain $H[k]$, and the
+        one-tap equalizer removes it. What is left is the noise divided by $H[k]$, so strong subcarriers
+        give tight clusters and faded ones are spread. Scenario 1 has no errors; Scenario 2 has 1 error,
+        on its deepest fade.
+  \item \textbf{Too short CP (Task 5d):} with $\Ncp = 4$ in Scenario 2, the previous symbol leaks in
+        (ISI and ICI). This interference is 13 times the noise, so all clusters widen and the errors rise
+        from 1 to 39. More transmit power cannot fix it; only a long enough CP can.
 \end{itemize}
 
 \end{document}
