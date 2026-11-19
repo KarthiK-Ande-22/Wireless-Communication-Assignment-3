@@ -40,128 +40,44 @@
 \vspace{6pt}
 
 % =====================================================================
-\section{Simulation set-up}
+\section{Overview}
 % =====================================================================
 
-\subsection{System model and conventions}
-
-The link follows Section 2 of the assignment. One slot has 14 OFDM symbols,
-$i = 0, \ldots, 13$, and every OFDM symbol has $N = 512$ subcarriers,
-$k = 0, \ldots, N-1$. Each resource element carries one 4-QAM symbol.
-Table~\ref{tab:parameters} lists the parameters.
-
-\begin{table}[!htb]
-  \centering
-  \caption{System parameters (Table 2 of the assignment) and the values derived from them.}
-  \label{tab:parameters}
-  \begin{tabular}{ll}
-    \toprule
-    Parameter & Value \\
-    \midrule
-    Bandwidth = sampling rate $W$         & 15.36 MHz, sample period $1/W = 65.1$ ns \\
-    Number of subcarriers (DFT size) $N$  & 512 \\
-    Subcarrier spacing $\Delta f = W/N$   & 30 kHz \\
-    OFDM symbol duration without CP $N/W$ & 33.33 $\mu$s \\
-    OFDM symbols per slot                 & 14 \\
-    Data symbols per slot                 & $14 \times 512 = 7168$ \\
-    Modulation                            & 4-QAM, $\E|s[n]|^2 = 1$ \\
-    SNR                                   & 30 dB (noise power $1/\SNR = 10^{-3}$) \\
-    CP length $\Ncp$ (Task 1)             & 4 (Scenario 1) and 75 samples (Scenario 2) \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
+\textbf{What.} This assignment builds a simplified OFDM link for the downlink of a 5G NR-like system,
+from scratch in Python: transmitter, multipath channel and receiver. One slot of 14 OFDM symbols is
+sent. Each OFDM symbol has $N = 512$ subcarriers ($W = 15.36$~MHz, $\Delta f = 30$~kHz), so a slot
+carries $14 \times 512 = 7168$ 4-QAM symbols. The SNR is 30~dB. Two channels are used:
 \begin{itemize}
-  \item \textbf{4-QAM:} the points $(\pm 1 \pm j)/\sqrt{2}$, the same function as in Assignment 2.
-        Every point has $|s| = 1$, so the average energy is exactly 1.
-  \item \textbf{Unitary DFT:} $F^H \dt = \sqrt{N}\,\texttt{ifft}(\dt)$ and $F y = \texttt{fft}(y)/\sqrt{N}$,
-        as in Section 4 of the assignment. Because $F$ is unitary, every time sample has
-        $\E|d_i[m]|^2 = 1$, so the transmitted signal has $\E|x[m]|^2 = 1$, and the noise keeps its
-        variance after the DFT.
-  \item \textbf{Channel:} $h[\ell] \sim \mathcal{CN}(0, \sigma_\ell^2)$ with $\sum_\ell \sigma_\ell^2 = 1$
-        (Table 1 of the assignment). One realization per scenario, constant over the slot and known
-        at the receiver. The frequency response is $H[k] = \texttt{fft}(h, N)$.
-  \item \textbf{Noise:} $w[m] \sim \mathcal{CN}(0, 1/\SNR)$, with independent real and imaginary parts.
-        Since the signal power is 1, the SNR is the SNR per data subcarrier.
-  \item \textbf{Seeds:} each random block has its own generator, \texttt{np.random.default\_rng(seed)}:
-        data 2026, channel 2027 (Scenario 1) and 2028 (Scenario 2), noise 2029. So the data and the
-        channel are the same in every run of a scenario. In Task 5(d) only the CP changes.
+  \item \textbf{Scenario 1}, a short channel: taps up to a delay of 4 samples (0.26~$\mu$s);
+  \item \textbf{Scenario 2}, a long channel: taps up to a delay of 75 samples (4.88~$\mu$s).
 \end{itemize}
 
-\subsection{Code structure}
+\textbf{Why OFDM.} A multipath channel spreads every transmitted sample over the next samples. At
+this rate one sample lasts only 65~ns, so in Scenario 2 one sample would disturb up to 75 later ones,
+and a long equalizer would be needed. OFDM sends the data on many narrow subcarriers instead. Each
+subcarrier is only 30~kHz wide, so the channel is flat over it: it only multiplies the subcarrier by one
+complex gain $H[k]$.
 
-Each block of Fig.~2 and Fig.~3 of the assignment is its own function, and each task has its own
-folder. The code is Python 3.12 with NumPy, SciPy (only \texttt{erfc}, for the $Q$-function) and
-Matplotlib. Only \texttt{fft}, \texttt{ifft} and \texttt{convolve} are used from NumPy; no built-in
-OFDM or 5G function is used.
+\textbf{Why a cyclic prefix.} Each OFDM symbol starts with a copy of its last $\Ncp$ samples. If the CP
+is at least as long as the channel, the previous OFDM symbol does not leak into the current one, and
+after the DFT every subcarrier is simply $\yt_i[k] = H[k]\,\dt_i[k] + \wt_i[k]$. Then the receiver only
+has to divide by $H[k]$ (one-tap equalizer). But the CP carries no new data, so it should be as short as
+possible. Choosing its length is the main design question.
 
-\begin{table}[!htb]
-  \centering
-  \caption{Files of the code. Shared numbers (Tables 1 and 2 of the assignment, seeds) are in \texttt{parameters.py}.}
-  \label{tab:code}
-  \small
-  \begin{tabular}{>{\raggedright\arraybackslash}p{4.7cm}>{\raggedright\arraybackslash}p{10.0cm}}
-    \toprule
-    File & What it does \\
-    \midrule
-    \texttt{Task-1/cp\_design.py}  & Task 1: CP length, rms delay spread, ISI + ICI power and SINR of shorter CPs, and a Monte Carlo check with the link of Tasks 2--4 (Sec.~\ref{sec:task1}, App.~\ref{app:interference}). \\
-    \texttt{Task-2/transmitter.py} & Task 2: \texttt{generate\_data}, \texttt{map\_to\_resource\_grid}, \texttt{ofdm\_modulate}, \texttt{add\_cyclic\_prefix} and \texttt{concatenate\_symbols}. \\
-    \texttt{Task-3/channel.py}     & Task 3: \texttt{channel\_taps}, \texttt{frequency\_response}, \texttt{multipath\_channel}. \\
-    \texttt{Task-4/receiver.py}    & Task 4: \texttt{split\_into\_blocks}, \texttt{remove\_cyclic\_prefix}, \texttt{ofdm\_demodulate}, \texttt{equalize}, \texttt{demap\_resource\_grid}; and \texttt{detect\_symbols} (Assignment 2 detector, only to count errors). \\
-    \texttt{Task-5/main.py}        & Task 5: main script. \texttt{main.py -{}-scenario S [-{}-cp Ncp]} runs the link for one scenario and CP length, and makes all figures of Task 5 and a \texttt{summary.txt}. \\
-    \texttt{Task-5/plots.py}       & The figures of Task 5. \\
-    \texttt{Task-5/cp\_sweep.py}   & Extra: the link for every $\Ncp$ from 0 to 80 (Sec.~\ref{sec:sweep}). \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+\textbf{What is done.}
+\begin{itemize}
+  \item \textbf{Task 1:} the CP length for both channels, and why.
+  \item \textbf{Tasks 2--4:} the transmitter, the channel and the receiver, one function per block of
+        Figs.~2 and 3 of the assignment.
+  \item \textbf{Task 5:} the channel, the transmitted signal and the equalized symbols for both scenarios,
+        and what goes wrong with a CP that is too short ($\Ncp = 4$ on the Scenario 2 channel).
+\end{itemize}
 
-\textbf{Reproducing.} \texttt{bash run\_all.sh} runs all scripts in under a minute and reproduces every
-figure and number of this report exactly. Every number quoted below is read from the
-\texttt{results/} folders; the README lists all commands.
-
-\subsection{Check of every block}
-
-Running the files of Tasks 2--4 directly checks each block (\texttt{results/*\_check.txt}).
-The transmitter checks are run for both designed CP lengths, $\Ncp = 4$ and $\Ncp = 75$:
-
-\begin{table}[!htb]
-  \centering
-  \caption{Checks of the blocks. Bottom: the noise-free loopback sends a whole slot through transmitter, channel and receiver with $1/\SNR = 0$.}
-  \label{tab:checks}
-  \small
-  \begin{tabular}{lll}
-    \toprule
-    Block & Check & Result \\
-    \midrule
-    DFT matrix          & $\max|F F^H - I|$                                          & $4.4 \cdot 10^{-14}$ \\
-    IDFT (Task 2c)      & $\max|\sqrt{N}\,\texttt{ifft}(\dt) - F^H \dt|$              & $2.8 \cdot 10^{-13}$ \\
-    DFT (Task 4a)       & $\max|\texttt{fft}(y_c)/\sqrt{N} - F y_c|$                  & $4.8 \cdot 10^{-13}$ \\
-    Grid mapping        & $\dt_i[k] = s[Ni + k]$ for all $i, k$                       & true \\
-    Energy (Task 2c)    & $\|d_i\|^2$ for all 14 symbols                              & $N = 512$ exactly \\
-    Cyclic prefix       & $\max|\text{CP} - \text{last } \Ncp \text{ samples}|$        & 0 (exact copy) \\
-    Concatenation       & $\max|\text{block } i \text{ of } x \text{ without CP} - d_i|$ & 0 (right order) \\
-    $H[k]$              & $\max|\texttt{fft}(h, N) - \sum_\ell h[\ell] e^{-j2\pi k\ell/N}|$ & $1.2 \cdot 10^{-15}$ (S1), $1.2 \cdot 10^{-14}$ (S2) \\
-    Tap generator       & $\E|h[\ell]|^2$ over 20\,000 draws                           & equal to $\sigma_\ell^2$ within 1\% \\
-    Convolution         & $\max|\texttt{convolve}(x, h) - \sum_\ell h[\ell] x[m - \ell]|$  & $7.0 \cdot 10^{-16}$ \\
-    Noise               & measured variance $\times \SNR$                               & 0.996 \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{8pt}
-  \begin{tabular}{llcc}
-    \toprule
-    Noise-free loopback & CP length & $\max|\yt_i[k] - H[k]\dt_i[k]|$ & $\max|\hat{s}[n] - s[n]|$ \\
-    \midrule
-    Scenario 1 & $\Ncp = 4 = L - 1$  & $1.0 \cdot 10^{-15}$ & $1.4 \cdot 10^{-15}$ \\
-               & $\Ncp = 3$          & $1.2 \cdot 10^{-2}$  & $2.5 \cdot 10^{-2}$ \\
-    Scenario 2 & $\Ncp = 75 = L - 1$ & $1.4 \cdot 10^{-15}$ & $6.7 \cdot 10^{-15}$ \\
-               & $\Ncp = 74$         & $5.0 \cdot 10^{-3}$  & $1.0 \cdot 10^{-1}$ \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-The loopback checks the CP condition of Task 1 directly: with $\Ncp = L - 1$ the receiver gets
-the data back exactly (up to rounding errors), and with a CP only one sample shorter it does not.
+\textbf{Conventions.} The DFT is unitary, as in Section 4 of the assignment:
+$F^H \dt = \sqrt{N}\,\texttt{ifft}(\dt)$, $F y = \texttt{fft}(y)/\sqrt{N}$ and $H[k] = \texttt{fft}(h, N)$.
+So the transmitted signal has power 1, and the SNR is the SNR per subcarrier. Fixed random seeds make
+every figure and number reproducible; the data and the channel stay the same when only the CP changes.
+The README lists the seeds and the commands.
 
 % =====================================================================
 \section{Task 1 --- CP length}
@@ -318,7 +234,7 @@ The transmitter is in \texttt{Task-2/transmitter.py}. Each block of Fig.~2 is on
         \end{itemize}
 \end{enumerate}
 Since $F$ is unitary, $\|d_i\|^2 = \|\dt_i\|^2 = N$, so the transmitted signal has average power 1.
-Every block is checked in Table~\ref{tab:checks}.
+Running \texttt{transmitter.py} checks every block (output in \texttt{Task-2/results/}).
 
 % =====================================================================
 \section{Task 3 --- Channel}
@@ -338,8 +254,8 @@ The channel is in \texttt{Task-3/channel.py}.
   \item \textbf{Frequency response} (\texttt{frequency\_response}). $H[k] = \texttt{fft}(h, N)$, used by
         the equalizer in Task 4.
 \end{itemize}
-Table~\ref{tab:taps} shows the two realizations; all results of Task 5 use them. Every block is
-checked in Table~\ref{tab:checks}.
+Table~\ref{tab:taps} shows the two realizations; all results of Task 5 use them. Running
+\texttt{channel.py} checks every block (output in \texttt{Task-3/results/}).
 
 \begin{table}[!htb]
   \centering
@@ -402,8 +318,10 @@ is one function.
   \item \textbf{Demapping} (\texttt{demap\_resource\_grid}). $\hat{s}[Ni + k] = \deq_i[k]$: the 14 columns
         are put one after the other, which undoes the mapping of Task 2(b).
 \end{enumerate}
-Every block is checked in Table~\ref{tab:checks}. Without noise, the receiver gets $s$ back exactly
-with $\Ncp = L - 1$, but not with a CP one sample shorter.
+\textbf{Check.} \texttt{receiver.py} sends one slot through the whole link without noise. With
+$\Ncp = L - 1$ the receiver gets $s$ back exactly ($\max|\hat{s} - s| \approx 10^{-15}$). With a CP only
+one sample shorter it does not: $\max|\hat{s} - s| = 0.025$ in Scenario 1 ($\Ncp = 3$) and 0.10 in
+Scenario 2 ($\Ncp = 74$). The output is in \texttt{Task-4/results/}.
 
 \textbf{Noise after the equalizer.} With the CP of Task 1, \eqref{eq:flat} holds, so the equalized
 value is the data symbol plus the noise divided by $H[k]$:
