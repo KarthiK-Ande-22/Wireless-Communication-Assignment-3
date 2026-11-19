@@ -121,7 +121,8 @@ figure and number of this report exactly. Every number quoted below is read from
 
 \subsection{Check of every block}
 
-Running the files of Tasks 2--4 directly checks each block (\texttt{results/*\_check.txt}):
+Running the files of Tasks 2--4 directly checks each block (\texttt{results/*\_check.txt}).
+The transmitter checks are run for both designed CP lengths, $\Ncp = 4$ and $\Ncp = 75$:
 
 \begin{table}[!htb]
   \centering
@@ -136,7 +137,9 @@ Running the files of Tasks 2--4 directly checks each block (\texttt{results/*\_c
     IDFT (Task 2c)      & $\max|\sqrt{N}\,\texttt{ifft}(\dt) - F^H \dt|$              & $2.8 \cdot 10^{-13}$ \\
     DFT (Task 4a)       & $\max|\texttt{fft}(y_c)/\sqrt{N} - F y_c|$                  & $4.8 \cdot 10^{-13}$ \\
     Grid mapping        & $\dt_i[k] = s[Ni + k]$ for all $i, k$                       & true \\
+    Energy (Task 2c)    & $\|d_i\|^2$ for all 14 symbols                              & $N = 512$ exactly \\
     Cyclic prefix       & $\max|\text{CP} - \text{last } \Ncp \text{ samples}|$        & 0 (exact copy) \\
+    Concatenation       & $\max|\text{block } i \text{ of } x \text{ without CP} - d_i|$ & 0 (right order) \\
     $H[k]$              & $\max|\texttt{fft}(h, N) - \sum_\ell h[\ell] e^{-j2\pi k\ell/N}|$ & $1.2 \cdot 10^{-15}$ (S1), $1.2 \cdot 10^{-14}$ (S2) \\
     Tap generator       & $\E|h[\ell]|^2$ over 20\,000 draws                           & equal to $\sigma_\ell^2$ within 1\% \\
     Convolution         & length of $y$                                                & $M + L - 1$ \\
@@ -311,7 +314,8 @@ power is $10^{-31}$, i.e.\ zero up to rounding errors (markers in Fig.~\ref{fig:
 The transmitter (\texttt{Task-2/transmitter.py}) has one function per block of Fig.~2 of the assignment.
 \begin{enumerate}[label=(\alph*)]
   \item \textbf{Data generation} (\texttt{generate\_data}): 7168 indices drawn uniformly from
-        $\{0, 1, 2, 3\}$ select the 4-QAM points. Since $|s[n]| = 1$, the average energy is exactly 1.
+        $\{0, 1, 2, 3\}$ select the 4-QAM points $(\pm 1 \pm j)/\sqrt{2}$ of Assignment 2.
+        Since $|s[n]| = 1$, the average energy is exactly 1.
   \item \textbf{Resource grid mapping} (\texttt{map\_to\_resource\_grid}): $s$ is cut into 14 rows of
         512 symbols, and the result is transposed. Column $i$ is $\dt_i$, with $\dt_i[k] = s[Ni + k]$.
   \item \textbf{OFDM modulation}: \texttt{ofdm\_modulate} computes $D = F^H \tilde{D} = \sqrt{N}\,
@@ -320,6 +324,16 @@ The transmitter (\texttt{Task-2/transmitter.py}) has one function per block of F
         \texttt{concatenate\_symbols} reads the $(N + \Ncp) \times 14$ array column after column.
         The result $x$ has $M = 14(N + \Ncp)$ samples: 7224 in Scenario 1 and 8218 in Scenario 2.
 \end{enumerate}
+\textbf{Check.} \texttt{transmitter.py} checks every block for $\Ncp = 4$ and $\Ncp = 75$
+(Table~\ref{tab:checks}; output in \texttt{Task-2/results/}):
+\begin{itemize}
+  \item the grid holds $s[Ni + k]$ at every position $(k, i)$;
+  \item $\sqrt{N}\,\texttt{ifft}$ equals the matrix product $F^H \dt$ within $2.8 \cdot 10^{-13}$;
+  \item every block of $x$ is exactly $(d_i[N - \Ncp], \ldots, d_i[N - 1], d_i[0], \ldots, d_i[N - 1])$,
+        in the order $i = 0, \ldots, 13$;
+  \item $x$ has 7224 and 8218 samples, as $M = 14(N + \Ncp)$ requires.
+\end{itemize}
+
 \textbf{Energy.} By Parseval, $\|d_i\|^2 = \|\dt_i\|^2 = N$ exactly, because $|s[n]| = 1$. Without a
 CP the average power of $x$ would be exactly 1. The CP repeats $\Ncp$ random samples, so the
 measured average power is 1.0000 (Scenario 1, 4 CP samples) and 0.9946 (Scenario 2, 75 CP samples).

@@ -1,10 +1,22 @@
-Task 2: transmitter check (CP length 75, data seed 2026)
-  number of data symbols            : 7168
+Task 2: transmitter check (data seed 2026)
+  number of data symbols, 14 x 512  : 7168
   average energy of s, E|s|^2       : 1.000000
-  resource grid shape (N x symbols) : (512, 14)
-  grid[k, i] == s[N i + k] for all  : True
   max |F F^H - I|                   : 4.44e-14
+CP length Ncp = 4
+  grid shape (N x symbols)          : (512, 14)
+  grid[k, i] == s[N i + k] for all  : True
   max |sqrt(N) ifft - F^H d~|       : 2.76e-13
-  length of x, M = 14 (N + Ncp)     : 8218
+  energy of d_i, min and max (N)    : 512.000000, 512.000000
   max |CP - last Ncp samples|       : 0.00e+00
+  max |x block i without CP - d_i|  : 0.00e+00
+  length of x, M = 14 (N + Ncp)     : 7224 (expected 7224)
+  average power of x, mean |x[m]|^2 : 1.0000
+CP length Ncp = 75
+  grid shape (N x symbols)          : (512, 14)
+  grid[k, i] == s[N i + k] for all  : True
+  max |sqrt(N) ifft - F^H d~|       : 2.76e-13
+  energy of d_i, min and max (N)    : 512.000000, 512.000000
+  max |CP - last Ncp samples|       : 0.00e+00
+  max |x block i without CP - d_i|  : 0.00e+00
+  length of x, M = 14 (N + Ncp)     : 8218 (expected 8218)
   average power of x, mean |x[m]|^2 : 0.9946
