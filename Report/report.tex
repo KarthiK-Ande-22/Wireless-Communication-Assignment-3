@@ -142,7 +142,7 @@ The transmitter checks are run for both designed CP lengths, $\Ncp = 4$ and $\Nc
     Concatenation       & $\max|\text{block } i \text{ of } x \text{ without CP} - d_i|$ & 0 (right order) \\
     $H[k]$              & $\max|\texttt{fft}(h, N) - \sum_\ell h[\ell] e^{-j2\pi k\ell/N}|$ & $1.2 \cdot 10^{-15}$ (S1), $1.2 \cdot 10^{-14}$ (S2) \\
     Tap generator       & $\E|h[\ell]|^2$ over 20\,000 draws                           & equal to $\sigma_\ell^2$ within 1\% \\
-    Convolution         & length of $y$                                                & $M + L - 1$ \\
+    Convolution         & $\max|\texttt{convolve}(x, h) - \sum_\ell h[\ell] x[m - \ell]|$  & $7.0 \cdot 10^{-16}$ \\
     Noise               & measured variance $\times \SNR$                               & 0.996 \\
     \bottomrule
   \end{tabular}
@@ -326,18 +326,25 @@ Every block is checked in Table~\ref{tab:checks}.
 
 The channel is in \texttt{Task-3/channel.py}.
 \begin{itemize}
-  \item \texttt{channel\_taps}: a vector of length $L$ = largest delay + 1 (5 in Scenario 1, 76 in
-        Scenario 2). It is zero except at the taps of Table 1 of the assignment, where
-        $h[\ell] = \sigma_\ell (a + jb)/\sqrt{2}$ with $a, b \sim \mathcal{N}(0, 1)$.
-  \item \texttt{multipath\_channel}: $y = \texttt{convolve}(x, h) + w$, of length $M + L - 1$
-        (7228 and 8293). The last $L - 1$ samples are the tail of the last OFDM symbol and are not used.
-  \item \texttt{frequency\_response}: $H[k] = \texttt{fft}(h, N)$, used by the equalizer.
+  \item \textbf{Taps} (\texttt{channel\_taps}). For each scenario one tap vector $h$ is drawn, of length
+        $L$ = last tap + 1 (5 in Scenario 1, 76 in Scenario 2). The taps of Table 1 are independent,
+        $h[\ell] \sim \mathcal{CN}(0, \sigma_\ell^2)$, drawn as $\sigma_\ell (a + jb)/\sqrt{2}$ with
+        $a, b \sim \mathcal{N}(0, 1)$. All other taps are zero. The seed is fixed: 2027 for Scenario 1
+        and 2028 for Scenario 2.
+  \item \textbf{Received signal} (\texttt{multipath\_channel}). The taps stay the same for the whole slot,
+        so $y$ is the linear convolution of the whole $x$ with $h$, plus noise:
+        $y = \texttt{convolve}(x, h) + w$ with independent $w[m] \sim \mathcal{CN}(0, 1/\SNR)$.
+        $y$ has $M + L - 1$ samples (7228 and 8293); the receiver does not use the last $L - 1$.
+  \item \textbf{Frequency response} (\texttt{frequency\_response}). $H[k] = \texttt{fft}(h, N)$, used by
+        the equalizer in Task 4.
 \end{itemize}
-Table~\ref{tab:taps} gives the realization of each scenario.
+Table~\ref{tab:taps} shows the two realizations; all results of Task 5 use them. Every block is
+checked in Table~\ref{tab:checks}.
 
 \begin{table}[!htb]
   \centering
-  \caption{Channel realizations (\texttt{Task-3/results/channel\_check.txt}), channel seed 2027 (Scenario 1) and 2028 (Scenario 2). All other taps are zero.}
+  \caption{The channel realization of each scenario (\texttt{Task-3/results/channel\_check.txt}).
+    All other taps are zero.}
   \label{tab:taps}
   \small
   \begin{tabular}[t]{rccc}
@@ -372,10 +379,6 @@ Table~\ref{tab:taps} gives the realization of each scenario.
     \bottomrule
   \end{tabular}
 \end{table}
-
-A single realization can be far from the average profile. In Scenario 1 tap 0, on average the
-strongest, has only 1\% of its average power, and tap 1 carries most of the energy. In Scenario 2
-tap 55 has 3.9 times its average power; this matters in Task 5(d).
 
 % =====================================================================
 \section{Task 4 --- Receiver}
