@@ -99,7 +99,7 @@ No built-in OFDM or 5G function is used.
 | `python3 Task-5/main.py --scenario 1` | Task 5 (a)-(c), Scenario 1 | `Task-5/results/scenario1_cp4/` | ~3 s |
 | `python3 Task-5/main.py --scenario 2` | Task 5 (a)-(c), Scenario 2 | `Task-5/results/scenario2_cp75/` | ~3 s |
 | `python3 Task-5/main.py --scenario 2 --cp 4` | Task 5 (d) | `Task-5/results/scenario2_cp4/` | ~3 s |
-| `python3 Task-5/cp_sweep.py` | extra: the link for every Ncp from 0 to 80, and the check of the ISI + ICI formula quoted in Appendix A | `Task-5/results/cp_sweep/` | ~2 s |
+| `python3 Task-5/cp_sweep.py` | extra: the link for every Ncp from 0 to 80, and a check of the ISI + ICI formula | `Task-5/results/cp_sweep/` | ~2 s |
 
 Each run of `main.py` writes six figures as `.pdf` (used in the report) and
 `.png`, and a `summary.txt` with every number quoted in the report:
@@ -178,7 +178,7 @@ y -> split_into_blocks -> remove_cyclic_prefix -> ofdm_demodulate (F) -> equaliz
 3. **Tasks 2-4**: the transmitter, the channel (with its realizations) and the receiver
 4. **Task 5**: (a)-(c) for each scenario, a comparison of the two, and (d) with the
    designed and the short CP side by side
-5. **Summary**, and **Appendix A**: the ISI + ICI power of a too short CP
+5. **Summary**
 
 ## Main results
 

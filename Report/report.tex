@@ -126,8 +126,8 @@ task requires, the same $\Ncp$ is used for all 14 OFDM symbols of the slot.
 
 \subsection{Justification}
 
-\textbf{Why not shorter.} A tap beyond the CP causes ISI and ICI. Appendix~\ref{app:interference}
-shows that, averaged over the channel, their power per subcarrier and the resulting SINR are
+\textbf{Why not shorter.} A tap beyond the CP causes ISI and ICI. Averaged over the channel, their
+power per subcarrier and the resulting SINR are
 \begin{equation}
   P_{\mathrm{int}} = \frac{2}{N} \sum_{\ell} \sigma_\ell^2 \max(\ell - \Ncp, 0), \qquad
   \mathrm{SINR} = \frac{\sum_\ell \sigma_\ell^2}{P_{\mathrm{int}} + 1/\SNR} = \frac{1}{P_{\mathrm{int}} + 10^{-3}}.
@@ -625,8 +625,8 @@ $\Ncp = 4$ (right or bottom), on the same axes.
     \caption{Too short CP, $\Ncp = 4$ (Task 5d).}
   \end{subfigure}
   \caption{Scenario 2, extra figure for Task 5(d): error power after the equalizer on every subcarrier,
-    on the same axes. Dashed: the expected $(1/\SNR + D[k])/|H[k]|^2$, with the ISI + ICI power $D[k]$ of
-    Appendix~\ref{app:interference}. \textbf{With $\Ncp = 4$ the expected error is 7.9 to 15.0 dB higher on
+    on the same axes. Dashed: the expected $(1/\SNR + D[k])/|H[k]|^2$, with the ISI + ICI power $D[k]$ on
+    subcarrier $k$. \textbf{With $\Ncp = 4$ the expected error is 7.9 to 15.0 dB higher on
     every subcarrier, and the measured error follows it.}}
   \label{fig:short-error}
 \end{figure}
@@ -678,7 +678,7 @@ symbol. This has two effects:
         the other subcarriers of symbol $i$.
 \end{itemize}
 Both add an error to \eqref{eq:flat}, $\yt_i[k] = H[k]\dt_i[k] + \tilde{e}_i[k] + \wt_i[k]$, whose power
-$D[k]$ is derived in Appendix~\ref{app:interference}. The one-tap equalizer cannot remove this error:
+on subcarrier $k$ is $D[k]$ (its mean over $k$ is \eqref{eq:pint} with $|h[\ell]|^2$ in place of $\sigma_\ell^2$). The one-tap equalizer cannot remove this error:
 it divides it by $H[k]$, just like the noise. So the expected error power after the equalizer is
 $(1/\SNR + D[k])/|H[k]|^2$ instead of $1/(\SNR\,|H[k]|^2)$ (dashed lines in
 Fig.~\ref{fig:short-error}). On average $D[k]$ is $1.34 \cdot 10^{-2}$, about 13 times the noise, so the
@@ -711,51 +711,5 @@ not worth it: it costs 11.6 dB of mean SINR and turns 1 symbol error into 39.
         the noise power. The clusters widen on every subcarrier, the mean SINR falls by 11.6 dB, and the
         symbol errors rise from 1 to 39.
 \end{itemize}
-
-\appendix
-% =====================================================================
-\section{ISI + ICI power of a too short CP}
-\label{app:interference}
-% =====================================================================
-
-Let $\Ncp < L - 1$ and $i \ge 1$. In \eqref{eq:window}, tap $\ell$ at window position $m$ reads block $i$
-if $m - \ell \ge -\Ncp$ and block $i-1$ otherwise. Write the window as the ideal circular convolution plus
-an error:
-\begin{gather}
-  y_{c,i}[m] = \sum_\ell h[\ell]\, d_i[(m-\ell) \bmod N] + e_i[m] + w_{c,i}[m], \notag \\
-  e_i[m] = \sum_{\ell} h[\ell]\, \mathbf{1}\{m - \ell < -\Ncp\}\, \delta_i[m - \ell],
-\end{gather}
-where, for $n = -(L-1), \ldots, -\Ncp - 1$, $\delta_i[n]$ is the sample of symbol $i-1$ that arrives
-minus the sample $d_i[n \bmod N]$ that a long CP would deliver. All samples of $d_i$ and $d_{i-1}$ are
-uncorrelated with unit power (because $F$ is unitary), so the $\delta_i[n]$ are uncorrelated with
-$\E|\delta_i[n]|^2 = 2$. Taking the DFT and setting $q = -n$:
-\begin{equation}
-  \tilde{e}_i[k] = \frac{1}{\sqrt{N}} \sum_{q = \Ncp + 1}^{L-1} \delta_i[-q]\, e^{j2\pi kq/N}\, H_q[k], \qquad
-  H_q[k] = \sum_{\ell \ge q} h[\ell]\, e^{-j2\pi k\ell/N},
-\end{equation}
-where $H_q$ is the response of only those taps that reach $q$ or more samples back. Hence
-\begin{equation}
-  D[k] = \E|\tilde{e}_i[k]|^2 = \frac{2}{N} \sum_{q = \Ncp + 1}^{L-1} |H_q[k]|^2 .
-  \label{eq:dk}
-\end{equation}
-Averaging over $k$ with Parseval, $\frac{1}{N}\sum_k |H_q[k]|^2 = \sum_{\ell \ge q} |h[\ell]|^2$, gives
-\begin{equation}
-  \bar{D} = \frac{2}{N} \sum_{q = \Ncp+1}^{L-1} \sum_{\ell \ge q} |h[\ell]|^2
-          = \frac{2}{N} \sum_\ell |h[\ell]|^2 \max(\ell - \Ncp, 0),
-\end{equation}
-and averaging over the channel ($\E|h[\ell]|^2 = \sigma_\ell^2$) gives \eqref{eq:pint}.
-\begin{itemize}
-  \item The error holds both effects: the part from $d_{i-1}$ is ISI, and the part from $d_i$ mixes
-        the subcarriers of symbol $i$ (ICI).
-  \item Symbol 0 has nothing before it ($x[m] = 0$ for $m < 0$), so $\E|\delta_0[n]|^2 = 1$ and it sees half
-        of $D[k]$. This is why the averages in Task 5 use the OFDM symbols 1--13.
-  \item After the equalizer the error power is $(1/\SNR + D[k])/|H[k]|^2$ (dashed line in
-        Fig.~\ref{fig:short-error}), and treating $\tilde{e}_i$ as Gaussian, $\SNR_k$ in \eqref{eq:ser} becomes the
-        SINR $|H[k]|^2 / (1/\SNR + D[k])$.
-\end{itemize}
-\texttt{interference\_power\_per\_subcarrier} in \texttt{Task-1/cp\_design.py} computes \eqref{eq:dk}
-with one FFT per $q$. \texttt{Task-5/cp\_sweep.py} checks it by simulation: over 200 noise-free slots
-of random data, the measured ISI + ICI power is within 0.23\% of $\bar{D}$, and within about 2\% of
-$D[k]$ on each subcarrier.
 
 \end{document}
