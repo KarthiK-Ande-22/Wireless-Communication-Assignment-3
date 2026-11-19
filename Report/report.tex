@@ -299,32 +299,26 @@ interference is zero.
 \section{Task 2 --- Transmitter}
 % =====================================================================
 
-The transmitter (\texttt{Task-2/transmitter.py}) has one function per block of Fig.~2 of the assignment.
+The transmitter is in \texttt{Task-2/transmitter.py}. Each block of Fig.~2 is one function.
 \begin{enumerate}[label=(\alph*)]
-  \item \textbf{Data generation} (\texttt{generate\_data}): 7168 indices drawn uniformly from
-        $\{0, 1, 2, 3\}$ select the 4-QAM points $(\pm 1 \pm j)/\sqrt{2}$ of Assignment 2.
-        Since $|s[n]| = 1$, the average energy is exactly 1.
-  \item \textbf{Resource grid mapping} (\texttt{map\_to\_resource\_grid}): $s$ is cut into 14 rows of
-        512 symbols, and the result is transposed. Column $i$ is $\dt_i$, with $\dt_i[k] = s[Ni + k]$.
-  \item \textbf{OFDM modulation}: \texttt{ofdm\_modulate} computes $D = F^H \tilde{D} = \sqrt{N}\,
-        \texttt{ifft}(\tilde{D})$ column by column, for all 14 symbols at once.
-        \texttt{add\_cyclic\_prefix} puts the last $\Ncp$ rows on top, and
-        \texttt{concatenate\_symbols} reads the $(N + \Ncp) \times 14$ array column after column.
-        The result $x$ has $M = 14(N + \Ncp)$ samples: 7224 in Scenario 1 and 8218 in Scenario 2.
+  \item \textbf{Data generation} (\texttt{generate\_data}). The 7168 data symbols are drawn at random,
+        with equal probability, from the 4-QAM points $(\pm 1 \pm j)/\sqrt{2}$ of Assignment 2. Every
+        point has $|s[n]|^2 = 1$, so $\E|s[n]|^2 = 1$.
+  \item \textbf{Resource grid mapping} (\texttt{map\_to\_resource\_grid}). The vector $s$ is cut into
+        14 pieces of 512 symbols, and piece $i$ becomes column $i$ of the $N \times 14$ grid. So
+        $\dt_i[k] = s[Ni + k]$.
+  \item \textbf{OFDM modulation.}
+        \begin{itemize}
+          \item \texttt{ofdm\_modulate}: $d_i = F^H \dt_i$, for all 14 columns at once. NumPy's
+                \texttt{ifft} has a factor $1/N$, so $F^H \dt_i = \sqrt{N}\,\texttt{ifft}(\dt_i)$.
+          \item \texttt{add\_cyclic\_prefix}: the last $\Ncp$ samples of $d_i$ are copied to its front,
+                which gives $x_i$ with $N + \Ncp$ samples.
+          \item \texttt{concatenate\_symbols}: $x_0, \ldots, x_{13}$ are put one after the other. So $x$ has
+                $M = 14(N + \Ncp)$ samples: 7224 for $\Ncp = 4$ and 8218 for $\Ncp = 75$.
+        \end{itemize}
 \end{enumerate}
-\textbf{Check.} \texttt{transmitter.py} checks every block for $\Ncp = 4$ and $\Ncp = 75$
-(Table~\ref{tab:checks}; output in \texttt{Task-2/results/}):
-\begin{itemize}
-  \item the grid holds $s[Ni + k]$ at every position $(k, i)$;
-  \item $\sqrt{N}\,\texttt{ifft}$ equals the matrix product $F^H \dt$ within $2.8 \cdot 10^{-13}$;
-  \item every block of $x$ is exactly $(d_i[N - \Ncp], \ldots, d_i[N - 1], d_i[0], \ldots, d_i[N - 1])$,
-        in the order $i = 0, \ldots, 13$;
-  \item $x$ has 7224 and 8218 samples, as $M = 14(N + \Ncp)$ requires.
-\end{itemize}
-
-\textbf{Energy.} By Parseval, $\|d_i\|^2 = \|\dt_i\|^2 = N$ exactly, because $|s[n]| = 1$. Without a
-CP the average power of $x$ would be exactly 1. The CP repeats $\Ncp$ random samples, so the
-measured average power is 1.0000 (Scenario 1, 4 CP samples) and 0.9946 (Scenario 2, 75 CP samples).
+Since $F$ is unitary, $\|d_i\|^2 = \|\dt_i\|^2 = N$, so the transmitted signal has average power 1.
+Every block is checked in Table~\ref{tab:checks}.
 
 % =====================================================================
 \section{Task 3 --- Channel}
