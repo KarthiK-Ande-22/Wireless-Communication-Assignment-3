@@ -252,7 +252,6 @@ and Fig.~\ref{fig:interference} compare candidate CP lengths.
     \textbf{4 (chosen)}    & \textbf{0.260} & \textbf{0.78\%} & 0.03 dB & 0 & \textbf{30.0 dB} & 0 \\
     \midrule
     \multicolumn{7}{l}{\textit{Scenario 2} ($L - 1 = 75$)} \\
-    4 (Task 5d)            & 0.260 & 0.78\%  & 0.03 dB & $-16.6$ dB & 16.4 dB & 13.6 dB \\
     36 (NR normal CP)      & 2.344 & 6.57\%  & 0.30 dB & $-28.9$ dB & 26.4 dB & 3.6 dB \\
     55 (all but last tap)  & 3.581 & 9.70\%  & 0.44 dB & $-35.1$ dB & 28.8 dB & 1.2 dB \\
     69                     & 4.492 & 11.88\% & 0.55 dB & $-40.3$ dB & 29.6 dB & 0.4 dB \\
@@ -265,8 +264,8 @@ and Fig.~\ref{fig:interference} compare candidate CP lengths.
   \item \textbf{Scenario 1.} One sample less ($\Ncp = 3$) already costs 0.8 dB of SINR, while the
         whole CP of 4 samples costs only 0.03 dB of energy.
   \item \textbf{Scenario 2.} The two last taps carry only 0.9\% and 0.4\% of the power, but cutting the
-        CP still hurts. Ignoring only the last tap ($\Ncp = 55$) loses 1.2 dB, and the NR normal CP of
-        36 samples loses 3.6 dB. Going from 36 to 75 samples costs only 0.3 dB of energy (0.59 dB
+        CP still hurts. Ignoring only the last tap ($\Ncp = 55$) loses 1.2 dB, and the 5G NR normal CP at
+        30 kHz (2.34 $\mu$s = 36 samples) loses 3.6 dB. Going from 36 to 75 samples costs only 0.3 dB of energy (0.59 dB
         instead of 0.30 dB) but gains 3.6 dB of SINR. Even the last 6 samples (69 to 75) gain 0.4 dB for 0.04 dB.
   \item \textbf{Error floor.} The ISI + ICI power grows with the signal power, so more transmit power
         cannot remove it. It is an error floor; only a longer CP removes it.
@@ -277,11 +276,6 @@ So every CP sample up to $L - 1$ pays for itself, and $\Ncp = L - 1$ gives the f
 nothing: the SINR is already 30 dB (Fig.~\ref{fig:interference}(b)). It only costs time and energy:
 0.78\% (0.03 dB) in Scenario 1 and 12.78\% (0.59 dB) in Scenario 2. A real system would add a few
 samples of margin for timing errors and filter tails.
-
-\textbf{Comparison with 5G NR.} With 30 kHz spacing, NR uses a normal CP of 2.34 $\mu$s, which is
-36 samples at this sampling rate (6.6\% overhead). Scenario 1 (0.26 $\mu$s) fits easily. Scenario 2
-needs about twice as much: with the NR CP its taps at 55 and 75 would leave an average interference of
-$-28.9$ dB, as large as the noise, and the SINR would drop to 26.4 dB.
 
 \textbf{Check by simulation.} \texttt{cp\_design.py} also sends slots through the transmitter, channel
 and receiver of Tasks 2--4 without noise, for 1000 random channel realizations (seed 2030) and 6

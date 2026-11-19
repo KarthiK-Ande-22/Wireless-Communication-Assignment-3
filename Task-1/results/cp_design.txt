@@ -30,12 +30,10 @@ Scenario 2
 Candidate CP lengths (average over the channel, SNR = 30 dB)
    Ncp   us      overhead   energy loss   ISI+ICI     SINR      SINR loss
 Scenario 1
-     0   0.000     0.00 %     0.00 dB      -25.3 dB    24.0 dB     6.0 dB
      2   0.130     0.39 %     0.02 dB      -33.7 dB    28.5 dB     1.5 dB
      3   0.195     0.58 %     0.03 dB      -36.8 dB    29.2 dB     0.8 dB
      4   0.260     0.78 %     0.03 dB         0        30.0 dB     0.0 dB
 Scenario 2
-     4   0.260     0.78 %     0.03 dB      -16.6 dB    16.4 dB    13.6 dB
     36   2.344     6.57 %     0.30 dB      -28.9 dB    26.4 dB     3.6 dB
     55   3.581     9.70 %     0.44 dB      -35.1 dB    28.8 dB     1.2 dB
     69   4.492    11.88 %     0.55 dB      -40.3 dB    29.6 dB     0.4 dB

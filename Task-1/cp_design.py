@@ -43,7 +43,7 @@ RESULTS_FOLDER = Path(__file__).resolve().parent / "results"
 NR_NORMAL_CP_LENGTH = 36
 
 # CP lengths compared in the design table
-CANDIDATE_CP_LENGTHS = {1: [0, 2, 3, 4], 2: [4, 36, 55, 69, 75]}
+CANDIDATE_CP_LENGTHS = {1: [2, 3, 4], 2: [36, 55, 69, 75]}
 
 # Monte Carlo check: number of random channel realizations and the CP lengths simulated
 NUM_CHANNEL_REALIZATIONS = 1000
