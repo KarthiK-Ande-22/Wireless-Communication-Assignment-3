@@ -1,8 +1,4 @@
-"""Figures of Task 5. Every function makes one figure and saves it as PDF and PNG.
-
-All plots use the sample, tap or subcarrier index on the horizontal axis,
-except the scatter plots, which show values in the complex plane.
-"""
+"""Figures of Task 5; each function makes one figure and saves it as PDF and PNG."""
 import sys
 from pathlib import Path
 
@@ -10,30 +6,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))   # for plot_style.py
-from plot_style import BLUE, GREY, INK, ORANGE, save_figure
+from plot_style import BLUE, GREEN, GREY, INK, ORANGE, save_figure
 
 COLORMAP = "viridis"          # colour of the scatter points = |H[k]|^2 in dB
 EQUALIZED_AXIS_LIMIT = 2.0    # same axes for all equalized scatter plots
 
 
 def power_db(values):
-    """10 log10 |values|^2."""
+    """Return 10 log10 |values|^2."""
     return 10 * np.log10(np.abs(values) ** 2)
 
 
-# ---------------------------------------------------------------------------
 # (a) Channel
-# ---------------------------------------------------------------------------
-def plot_channel_taps(taps, tap_delays, tap_powers, title, folder):
-    """Stem plot of |h[l]| against the tap index l.
 
-    The grey bars show the rms value sigma_l of each tap (Table 1), to compare
-    this realization with the average power profile.
-    """
+def plot_channel_taps(taps, tap_delays, tap_powers, title, folder):
+    """Stem plot of |h[l]| against l, with the rms value sigma_l of Table 1 for comparison."""
     fig, ax = plt.subplots(figsize=(4.6, 3.4))
     delays = np.asarray(tap_delays)
-    markers, stems, baseline = ax.stem(delays, np.abs(taps[delays]), basefmt=" ",
-                                       label="$|h[\\ell]|$ (this realization)")
+    markers, stems, _ = ax.stem(delays, np.abs(taps[delays]), basefmt=" ",
+                                label="$|h[\\ell]|$ (this realization)")
     plt.setp(markers, color=BLUE, markersize=5)
     plt.setp(stems, color=BLUE, linewidth=1.4)
     ax.plot(delays, np.sqrt(tap_powers), linestyle="none", marker="_", markersize=12,
@@ -71,29 +62,18 @@ def plot_frequency_response(response, title, folder):
     save_figure(fig, folder, "frequency_response")
 
 
-# ---------------------------------------------------------------------------
 # (b) Transmitted signal
-# ---------------------------------------------------------------------------
-def plot_transmitted_signal(x, num_subcarriers, cp_length, title, folder):
-    """|x[m]| against the sample index m, with the CP of every OFDM symbol shaded.
 
-    A side panel shows the histogram of |x[m]| next to the Rayleigh density
-    2 r exp(-r^2), the amplitude of a CN(0, 1) sample.
-    """
-    block_length = num_subcarriers + cp_length
-    num_ofdm_symbols = len(x) // block_length
+def plot_whole_slot(ax, ax_hist, x, block_length, cp_length, title):
+    """|x[m]| of the whole slot with every CP shaded, and a histogram of |x[m]| on the side."""
     amplitude = np.abs(x)
-
-    fig, (ax, ax_hist) = plt.subplots(1, 2, figsize=(9, 3.2), sharey=True,
-                                      gridspec_kw={"width_ratios": [5, 1], "wspace": 0.04})
-    for i in range(num_ofdm_symbols):
+    for i in range(len(x) // block_length):
         start = i * block_length
         ax.axvspan(start, start + cp_length, color=ORANGE, alpha=0.35, linewidth=0,
                    label="cyclic prefix" if i == 0 else None)
         ax.axvline(start, color=GREY, linewidth=0.5, linestyle=":")
     ax.plot(np.arange(len(x)), amplitude, color=BLUE, linewidth=0.35, label="$|x[m]|$")
-    ax.axhline(1, color=INK, linestyle="--", linewidth=1.0,
-               label="rms value 1 ($E|x[m]|^2 = 1$)")
+    ax.axhline(1, color=INK, linestyle="--", linewidth=1.0, label="rms value 1 ($E|x[m]|^2 = 1$)")
     ax.set_xlim(0, len(x))
     ax.set_ylim(0, 1.3 * amplitude.max())     # room for the legend
     ax.set_xlabel("sample index $m$")
@@ -101,31 +81,63 @@ def plot_transmitted_signal(x, num_subcarriers, cp_length, title, folder):
     ax.set_title(title)
     ax.legend(loc="upper right", ncol=3, framealpha=0.95)
 
-    # Histogram of the amplitudes, drawn sideways so it shares the |x| axis
+    # Rayleigh density 2 r exp(-r^2): the amplitude of a CN(0, 1) sample
     bins = np.linspace(0, amplitude.max(), 40)
-    ax_hist.hist(amplitude, bins=bins, density=True, orientation="horizontal",
-                 color=BLUE, alpha=0.45)
+    ax_hist.hist(amplitude, bins=bins, density=True, orientation="horizontal", color=BLUE, alpha=0.45)
     r = np.linspace(0, amplitude.max(), 200)
     ax_hist.plot(2 * r * np.exp(-r ** 2), r, color=INK, linewidth=1.2, label="Rayleigh pdf")
     ax_hist.set_xlabel("density")
     ax_hist.legend(loc="upper right", fontsize=8)
     ax_hist.tick_params(labelleft=False)
+
+
+def plot_cp_zoom(ax_start, ax_end, x, num_subcarriers, cp_length):
+    """Zoom on the start and the end of OFDM symbol 0: the CP is a copy of the last Ncp samples."""
+    block_length = num_subcarriers + cp_length
+    width = max(2 * cp_length, 40)                     # samples shown in each panel
+    start_samples = np.arange(0, width)
+    end_samples = np.arange(block_length - width, block_length)
+
+    ax_start.axvspan(-0.5, cp_length - 0.5, color=ORANGE, alpha=0.35, linewidth=0, label="CP")
+    ax_end.axvspan(num_subcarriers - 0.5, block_length - 0.5, color=GREEN, alpha=0.3, linewidth=0,
+                   label="last $N_{cp}$ samples of $d_0$")
+    for ax, samples in [(ax_start, start_samples), (ax_end, end_samples)]:
+        ax.plot(samples, np.abs(x[samples]), color=BLUE, linewidth=0.9, marker=".", markersize=4)
+        ax.set_xlim(samples[0] - 0.5, samples[-1] + 0.5)
+        ax.set_xlabel("sample index $m$")
+        ax.grid(True)
+        ax.legend(loc="upper right", fontsize=8, framealpha=0.95)
+    ax_start.set_ylim(0, 1.25 * np.abs(x[:block_length]).max())   # room for the legend
+    ax_start.set_ylabel("$|x[m]|$")
+    ax_start.set_title(f"start of OFDM symbol $i = 0$ ($m = 0$ to ${width - 1}$)")
+    ax_end.set_title(f"end of OFDM symbol $i = 0$ "
+                     f"($m = {block_length - width}$ to ${block_length - 1}$)")
+
+
+def plot_transmitted_signal(x, num_subcarriers, cp_length, title, folder):
+    """Top: |x[m]| of the whole slot. Bottom: zoom on the CP of OFDM symbol 0."""
+    fig = plt.figure(figsize=(9, 6.0))
+    top, bottom = fig.subfigures(2, 1, height_ratios=[1, 0.9], hspace=0.04)
+    ax, ax_hist = top.subplots(1, 2, sharey=True,
+                               gridspec_kw={"width_ratios": [5, 1], "wspace": 0.04})
+    ax_start, ax_end = bottom.subplots(1, 2, sharey=True, gridspec_kw={"wspace": 0.06})
+    plot_whole_slot(ax, ax_hist, x, num_subcarriers + cp_length, cp_length, title)
+    plot_cp_zoom(ax_start, ax_end, x, num_subcarriers, cp_length)
     save_figure(fig, folder, "transmitted_signal")
 
 
-# ---------------------------------------------------------------------------
 # (c) Equalization
-# ---------------------------------------------------------------------------
+
 def scatter_colored_by_channel(ax, values, response, color_range):
-    """Scatter plot of complex values, coloured by |H[k]|^2 in dB."""
-    order = np.argsort(np.abs(response))[::-1]   # weakest subcarriers drawn last (on top)
+    """Scatter plot of complex values, coloured by |H[k]|^2 in dB (weakest subcarriers on top)."""
+    order = np.argsort(np.abs(response))[::-1]
     return ax.scatter(values[order].real, values[order].imag, c=power_db(response[order]),
                       cmap=COLORMAP, vmin=color_range[0], vmax=color_range[1],
                       s=9, linewidths=0)
 
 
 def plot_received_symbols(received, response, title, folder, color_range):
-    """Received values y~_i[k] (after the DFT, before the equalizer)."""
+    """Received values y~_i[k] after the DFT, before the equalizer."""
     fig, ax = plt.subplots(figsize=(4.6, 4.0))
     points = scatter_colored_by_channel(ax, received, response, color_range)
     fig.colorbar(points, ax=ax, label="$|H[k]|^2$ (dB)", shrink=0.9)
@@ -144,11 +156,7 @@ def plot_received_symbols(received, response, title, folder, color_range):
 
 
 def plot_equalized_symbols(equalized, response, constellation, title, folder, color_range):
-    """Equalized values d^_i[k] together with the 4-QAM constellation points.
-
-    The axes are the same in every run, so the plots can be compared. Points
-    outside the axes are counted in the legend.
-    """
+    """Equalized values d^_i[k] and the 4-QAM points, on the same axes in every run."""
     fig, ax = plt.subplots(figsize=(4.6, 4.0))
     points = scatter_colored_by_channel(ax, equalized, response, color_range)
     fig.colorbar(points, ax=ax, label="$|H[k]|^2$ (dB)", shrink=0.9)
@@ -174,11 +182,7 @@ def plot_equalized_symbols(equalized, response, constellation, title, folder, co
 
 def plot_equalization_error(error_one_symbol, error_average, predicted_error,
                             plot_symbol, title, folder, y_limits):
-    """Error power |d^_i[k] - d~_i[k]|^2 in dB against the subcarrier index k.
-
-    Grey dots: the plotted OFDM symbol. Blue: mean over the OFDM symbols
-    1, ..., 13. Black: the expected error power (1/SNR + D[k]) / |H[k]|^2.
-    """
+    """Error power |d^_i[k] - d~_i[k]|^2 in dB against k, with the expected (1/SNR + D[k]) / |H[k]|^2."""
     num_subcarriers = len(error_one_symbol)
     subcarriers = np.arange(num_subcarriers)
 

@@ -1,19 +1,4 @@
-"""Extra for Task 5(d): simulation check of the CP design of Task 1.
-
-1. CP sweep. For both scenarios and every CP length from 0 to 80 samples,
-   the slot of main.py (same data, channel and noise seeds) is sent through
-   the link. The script measures
-     - the power of the disturbance y~ - H d~ (noise + ISI + ICI) over the
-       OFDM symbols 1-13 and all subcarriers, and
-     - the number of symbol errors in the slot,
-   and compares them with the expected values from Task-1/cp_design.py.
-
-2. Check of the ISI + ICI formula. Scenario 2, Ncp = 4, no noise, 200 slots
-   with different random data: the measured ISI + ICI power is compared with
-   D[k] on every subcarrier.
-
-    python3 Task-5/cp_sweep.py
-"""
+"""Extra: the link of main.py for every CP length from 0 to 80, and a check of the formula for D[k]."""
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -33,7 +18,7 @@ NUM_CHECK_SLOTS = 200
 
 
 def sweep(scenario):
-    """Measured and expected disturbance power and symbol errors for every Ncp."""
+    """Return the measured and expected disturbance power and symbol errors for every Ncp."""
     measured_power, expected_power = [], []
     measured_errors, expected_errors = [], []
     for cp_length in CP_LENGTHS:
@@ -47,7 +32,7 @@ def sweep(scenario):
 
 
 def check_interference_formula(scenario, cp_length):
-    """Mean measured ISI + ICI power over many noise-free slots vs. D[k]."""
+    """Compare the ISI + ICI power of many noise-free slots of random data with D[k]."""
     profile = CHANNEL_PROFILES[scenario]
     taps = channel_taps(profile["tap_delays"], profile["tap_powers"],
                         np.random.default_rng(CHANNEL_SEEDS[scenario]))
@@ -81,7 +66,7 @@ def check_interference_formula(scenario, cp_length):
 
 
 def plot_sweep(results):
-    """Disturbance power (top) and symbol errors (bottom) against the CP length."""
+    """Plot the disturbance power (top) and the symbol errors (bottom) against the CP length."""
     fig, (ax_power, ax_errors) = plt.subplots(2, 1, figsize=(8, 6), sharex=True,
                                               gridspec_kw={"height_ratios": [3, 2]})
     for scenario, color, marker in [(1, BLUE, "o"), (2, ORANGE, "s")]:

@@ -335,11 +335,11 @@ so the expected number of errors in a slot is $14 \sum_k P_e(\SNR_k)$.
 \section{Task 5 --- Results}
 % =====================================================================
 
-All figures are made by \texttt{python3 Task-5/main.py -{}-scenario S [-{}-cp Ncp]}. Every run sends
-the same data. In the plots of (c), OFDM symbol $i = 7$ is shown, and the colour of each point is
-$|H[k]|^2$ of its subcarrier (the same colour scale for $\yt_7$ and $\deq_7$). All equalized plots
-use the same axes. Each scenario also has one extra figure: the error $|\deq_i[k] - \dt_i[k]|^2$ on
-every subcarrier next to \eqref{eq:eqnoise}.
+All figures are made by \texttt{python3 Task-5/main.py -{}-scenario S [-{}-cp Ncp]}. Every run sends the
+same data, and the runs of one scenario use the same channel and noise. In (c), OFDM symbol $i = 7$ is
+shown, and the colour of each point is $|H[k]|^2$ of its subcarrier. All equalized plots use the same
+axes. Each run has one extra figure: the error after the equalizer on every subcarrier, next to its
+expected value \eqref{eq:eqnoise}.
 
 % ---------------------------------------------------------------------
 \subsection{\texorpdfstring{Scenario 1 ($\Ncp = 4$)}{Scenario 1 (Ncp = 4)}}
@@ -364,32 +364,34 @@ every subcarrier next to \eqref{eq:eqnoise}.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=\textwidth]{scenario1_cp4/transmitted_signal.pdf}
-  \caption{Scenario 1 ($\Ncp = 4$), Task 5(b): $|x[m]|$ for the $M = 7224$ samples of one slot.
-    Dotted lines: start of each OFDM symbol; the 4-sample CPs (orange) are too thin to see at this
-    scale. Right: histogram of $|x[m]|$ and the Rayleigh density $2r e^{-r^2}$.
-    \textbf{The signal looks like noise with a Rayleigh amplitude; PAPR 9.55 dB.}}
+  \includegraphics[width=0.92\textwidth]{scenario1_cp4/transmitted_signal.pdf}
+  \caption{Scenario 1 ($\Ncp = 4$), Task 5(b). Top: $|x[m]|$ for the $M = 7224$ samples of one slot;
+    dotted lines mark the start of each OFDM symbol, and the 4-sample CPs are too thin to see. Right:
+    histogram of $|x[m]|$ and the Rayleigh density $2r e^{-r^2}$. Bottom: zoom on OFDM symbol 0; the CP
+    (orange) is a copy of its last 4 samples (green). \textbf{A noise-like signal with a Rayleigh
+    amplitude; PAPR 9.55 dB.}}
   \label{fig:s1-x}
 \end{figure}
 
 \textbf{(a) Channel} (Figs.~\ref{fig:s1-taps} and \ref{fig:s1-response}).
 \begin{itemize}
-  \item The realization is dominated by tap 1 ($|h[1]|^2 = 0.715$); tap 0 is almost zero.
-        $\|h\|^2 = 0.858$ ($-0.66$ dB), which is also the mean of $|H[k]|^2$ over $k$ (Parseval).
+  \item In this realization tap 1 is the strongest ($|h[1]|^2 = 0.715$) and tap 0 is almost zero.
+        The channel energy is $\|h\|^2 = 0.858$, which is also the mean of $|H[k]|^2$.
   \item $|H[k]|^2$ changes slowly and smoothly, from $-6.3$ dB ($k = 416$) to $+1.8$ dB ($k = 172$).
         No subcarrier is below $-10$ dB.
-  \item The reason is the short channel: $H[k]$ is a polynomial of degree 4 in $e^{-j2\pi k/N}$, so it has
-        at most 4 dips over the whole band. The coherence bandwidth is about 98 subcarriers.
+  \item The reason is the short channel: with only 5 taps, $|H[k]|^2$ has at most 4 dips over the whole
+        band. The coherence bandwidth is about 98 subcarriers.
 \end{itemize}
 
 \textbf{(b) Transmitted signal} (Fig.~\ref{fig:s1-x}).
 \begin{itemize}
-  \item $|x[m]|$ looks like noise. Each $x[m]$ is a sum of 512 independent symbols with different
-        phases, so it is close to $\mathcal{CN}(0, 1)$ and $|x[m]|$ is Rayleigh distributed: the
-        measured mean is 0.885 against $\sqrt{\pi}/2 = 0.886$.
-  \item The average power is 1.0000, but peaks reach about 3 times the rms value:
-        the peak-to-average power ratio (PAPR) is 9.55 dB, a known drawback of OFDM.
-  \item The 14 OFDM symbols follow each other without gaps; each starts with its 4-sample CP.
+  \item $|x[m]|$ looks like noise. Each $x[m]$ is a sum of 512 data symbols with different phases, so
+        it is close to $\mathcal{CN}(0, 1)$ and $|x[m]|$ follows the Rayleigh density (mean 0.885,
+        against $\sqrt{\pi}/2 = 0.886$).
+  \item The average power is 1, but the peaks reach about 3 times the rms value: the peak-to-average
+        power ratio (PAPR) is 9.55 dB, a known drawback of OFDM.
+  \item The zoom shows how each OFDM symbol is built: its first 4 samples (the CP) are the same as its
+        last 4 samples.
 \end{itemize}
 
 \begin{figure}[!htb]
@@ -398,7 +400,7 @@ every subcarrier next to \eqref{eq:eqnoise}.
     \centering
     \includegraphics[width=\linewidth]{scenario1_cp4/received_symbols.pdf}
     \caption{Scenario 1 ($\Ncp = 4$), Task 5(c): received values $\yt_7[k]$, before the equalizer.
-      \textbf{Four arms: four rotated copies of the curve $H[k]$.}}
+      \textbf{Four arms: rotated copies of the curve $H[k]$.}}
     \label{fig:s1-rx}
   \end{minipage}\hfill
   \begin{minipage}[t]{0.485\textwidth}
@@ -415,29 +417,25 @@ every subcarrier next to \eqref{eq:eqnoise}.
   \includegraphics[width=\textwidth]{scenario1_cp4/equalization_error.pdf}
   \caption{Scenario 1 ($\Ncp = 4$), extra figure for Task 5(c): error power after the equalizer on
     every subcarrier. Grey: OFDM symbol 7; blue: mean over the OFDM symbols 1--13; dashed: the
-    expected value \eqref{eq:eqnoise} (here $D[k] = 0$). \textbf{The error is the mirror image of
-    $|H[k]|^2$ (Fig.~\ref{fig:s1-response}): $-30$ dB $- |H[k]|^2_{\mathrm{dB}}$.}}
+    expected value \eqref{eq:eqnoise}. \textbf{The error is the mirror image of $|H[k]|^2$
+    (Fig.~\ref{fig:s1-response}).}}
   \label{fig:s1-error}
 \end{figure}
 
 \textbf{(c) Equalization} (Figs.~\ref{fig:s1-rx}--\ref{fig:s1-error}).
 \begin{itemize}
-  \item \textbf{Received values.} By \eqref{eq:flat}, each data symbol is rotated by $\angle H[k]$
-        and scaled by $|H[k]|$, plus noise. Since $H[k]$ changes smoothly with $k$, the 512 points lie
-        on four ``arms'': copies of the curve $H[k]$ in the complex plane, one for each 4-QAM point,
-        rotated by $90^\circ$ from each other. The distance from the origin is $|H[k]|$, between 0.48
-        (dark) and 1.23 (yellow). A decision is not possible here: the phase of $H[k]$ moves the points
-        through all four quadrants.
-  \item \textbf{Equalized values.} All 512 points are in four tight clusters around the 4-QAM points.
-  \item \textbf{Spread and $|H[k]|^2$.} By \eqref{eq:eqnoise}, the rms error is $1/\sqrt{\SNR |H[k]|^2}$:
-        from 0.026 on the strongest subcarrier ($+1.8$ dB) to 0.065 on the weakest ($-6.3$ dB), so the
-        darker points spread a little more. The decision boundary is $1/\sqrt{2} = 0.71$ away,
-        more than 10 times the largest rms error. $\SNR_k$ is between 23.7 and 31.8 dB.
-  \item \textbf{Numbers} (\texttt{scenario1\_cp4/summary.txt}). Fig.~\ref{fig:s1-error} follows
-        \eqref{eq:eqnoise}: the mean error over symbols 1--13 is $1.522 \cdot 10^{-3}$, expected
-        $1.519 \cdot 10^{-3}$. Before the equalizer, $\yt - H\dt$ has power $1.010 \cdot 10^{-3}$, equal to
-        the noise $10^{-3}$, so no ISI or ICI is left. There are 0 symbol errors in the slot
-        (expected 0.00 from \eqref{eq:ser}).
+  \item \textbf{Received values.} By \eqref{eq:flat}, each data symbol is rotated by the phase of $H[k]$
+        and scaled by $|H[k]|$, plus noise. $H[k]$ changes slowly with $k$, so the 512 points lie on four
+        ``arms'', one for each 4-QAM point, turned by $90^\circ$ from each other. The distance from the
+        origin is $|H[k]|$, from 0.48 (dark) to 1.23 (yellow). No decision is possible here: the phase of
+        $H[k]$ moves the points into all four quadrants.
+  \item \textbf{Equalized values.} All 512 points are in four tight clusters around the 4-QAM points,
+        and there are no symbol errors in the slot.
+  \item \textbf{Spread and $|H[k]|^2$.} By \eqref{eq:eqnoise}, the rms error is $1/\sqrt{\SNR\,|H[k]|^2}$:
+        0.026 on the strongest subcarrier and 0.065 on the weakest, so the darker points spread a little
+        more. Both are much smaller than 0.71, the distance to the decision boundary.
+        Fig.~\ref{fig:s1-error} shows the same: the error is the mirror image of $|H[k]|^2$ and follows
+        the expected line (mean $1.52 \cdot 10^{-3}$, expected $1.52 \cdot 10^{-3}$).
 \end{itemize}
 
 \FloatBarrier
@@ -465,29 +463,31 @@ every subcarrier next to \eqref{eq:eqnoise}.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=\textwidth]{scenario2_cp75/transmitted_signal.pdf}
-  \caption{Scenario 2 ($\Ncp = 75$), Task 5(b): $|x[m]|$ for the $M = 8218$ samples of one slot.
-    Orange: the 75-sample CP of each OFDM symbol. Right: histogram of $|x[m]|$ and the Rayleigh
-    density. \textbf{Same noise-like signal as in Scenario 1; 12.8\% of the samples are CP.}}
+  \includegraphics[width=0.92\textwidth]{scenario2_cp75/transmitted_signal.pdf}
+  \caption{Scenario 2 ($\Ncp = 75$), Task 5(b), as in Fig.~\ref{fig:s1-x}. Top: $|x[m]|$ for the
+    $M = 8218$ samples of one slot, with the 75-sample CP of each OFDM symbol in orange. Bottom: zoom on
+    OFDM symbol 0; the samples $m = 0$--74 (CP) repeat the samples $m = 512$--586.
+    \textbf{The same noise-like signal; 12.8\% of the samples are CP.}}
   \label{fig:s2-x}
 \end{figure}
 
 \textbf{(a) Channel} (Figs.~\ref{fig:s2-taps} and \ref{fig:s2-response}).
 \begin{itemize}
-  \item Eight non-zero taps over 76 positions. Tap 2 is the strongest ($|h[2]|^2 = 0.589$);
-        $\|h\|^2 = 1.091$ ($+0.38$ dB).
-  \item $|H[k]|^2$ changes fast and has deep fades: 27 subcarriers are below $-10$ dB, the deepest are
-        $-26.0$ dB ($k = 450$) and $-25.9$ dB ($k = 216$), and the maximum is $+6.2$ dB ($k = 301$).
+  \item Eight non-zero taps over 76 positions. Tap 2 is the strongest ($|h[2]|^2 = 0.589$), and
+        $\|h\|^2 = 1.091$.
+  \item $|H[k]|^2$ changes fast and has deep fades: 27 subcarriers are below $-10$ dB, the deepest is
+        $-26.0$ dB ($k = 450$), and the maximum is $+6.2$ dB ($k = 301$).
   \item The coherence bandwidth is about 9 subcarriers, ten times smaller than in Scenario 1, because
-        the delay spread is ten times larger. Still, $\Delta f = 30$ kHz is much smaller than
-        $B_c \approx 270$ kHz, so every subcarrier sees a flat channel and one complex gain $H[k]$ per
-        subcarrier is enough. This is the purpose of OFDM.
+        the delay spread is ten times larger. Still, one subcarrier (30 kHz) is much narrower than
+        $B_c \approx 270$ kHz, so every subcarrier sees a flat channel, one complex gain $H[k]$. This is
+        what OFDM is for.
 \end{itemize}
 
-\textbf{(b) Transmitted signal} (Fig.~\ref{fig:s2-x}). The signal has the same statistics as in
-Scenario 1 (mean $|x[m]|$ = 0.883, PAPR 9.57 dB). Now the 14 CPs of 75 samples are clearly visible.
-The average power is 0.9946 instead of exactly 1, because the 75 CP samples repeat random samples
-(Sec.~3).
+\textbf{(b) Transmitted signal} (Fig.~\ref{fig:s2-x}). The signal looks the same as in Scenario 1
+(mean $|x[m]| = 0.883$, PAPR 9.57 dB), but now the 14 CPs of 75 samples are clearly visible. In the
+zoom, the CP repeats the end of the symbol sample by sample; for example, the peak at $m = 63$ appears
+again at $m = 512 + 63 = 575$. The average power is 0.9946 instead of exactly 1, because the CP repeats
+75 random samples of each symbol.
 
 \begin{figure}[!htb]
   \centering
@@ -511,29 +511,24 @@ The average power is 0.9946 instead of exactly 1, because the 75 CP samples repe
   \centering
   \includegraphics[width=\textwidth]{scenario2_cp75/equalization_error.pdf}
   \caption{Scenario 2 ($\Ncp = 75$), extra figure for Task 5(c): error power after the equalizer on
-    every subcarrier, as in Fig.~\ref{fig:s1-error} ($D[k] = 0$). \textbf{The peaks are the fades
-    of Fig.~\ref{fig:s2-response}: the noise is multiplied by $1/|H[k]|^2$.}}
+    every subcarrier, as in Fig.~\ref{fig:s1-error}. \textbf{The peaks are the fades of
+    Fig.~\ref{fig:s2-response}.}}
   \label{fig:s2-error}
 \end{figure}
 
 \textbf{(c) Equalization} (Figs.~\ref{fig:s2-rx}--\ref{fig:s2-error}).
 \begin{itemize}
   \item \textbf{Received values.} A round cloud with no visible structure: $H[k]$ changes fast with $k$,
-        so neighbouring subcarriers get very different rotations. $|H[k]|$ goes from 0.05 to 2.03; the
+        so neighbouring subcarriers get very different rotations. $|H[k]|$ goes from 0.05 to 2.03, and the
         points of the faded subcarriers (dark) are close to the origin.
   \item \textbf{Equalized values.} The strong subcarriers (green, yellow) form tight clusters. The
         faded subcarriers (dark) are spread far from the 4-QAM points.
-  \item \textbf{Spread and $|H[k]|^2$.} By \eqref{eq:eqnoise} the rms error is 0.016 on the strongest
-        subcarrier ($+6.2$ dB) but 0.63 on the deepest fade ($-26.0$ dB, $k = 450$), close to the
-        distance 0.71 to the decision boundary. Dividing by a small $H[k]$ multiplies the noise by
-        $1/|H[k]|$ (noise enhancement). $\SNR_k$ goes from 4.0 to 36.2 dB.
-  \item \textbf{Numbers} (\texttt{scenario2\_cp75/summary.txt}). On the 226 subcarriers with
-        $|H[k]|^2 \ge 0$ dB the mean error is $5.98 \cdot 10^{-4}$ (expected $6.00 \cdot 10^{-4}$); over all
-        subcarriers it is $4.57 \cdot 10^{-3}$ (expected $4.70 \cdot 10^{-3}$), dominated by the few deep
-        fades. Before the equalizer, $\yt - H\dt$ has power $1.013 \cdot 10^{-3}$: only noise, as in
-        Scenario 1. There is 1 symbol error in the slot, in symbol 7 on subcarrier $k = 450$, the deepest
-        fade. \eqref{eq:ser} expects 3.1 errors, almost all from the deepest fades; with so few errors,
-        1 is a normal result.
+  \item \textbf{Spread and $|H[k]|^2$.} By \eqref{eq:eqnoise}, the rms error is 0.016 on the strongest
+        subcarrier but 0.63 on the deepest fade ($k = 450$), close to the distance 0.71 to the decision
+        boundary. Dividing by a small $H[k]$ makes the noise large (noise enhancement).
+        Fig.~\ref{fig:s2-error} shows this: the error peaks exactly at the fades.
+  \item \textbf{Symbol errors.} There is 1 error in the slot, in symbol 7 on subcarrier $k = 450$, the
+        deepest fade. \eqref{eq:ser} expects about 3, almost all on the deepest fades.
 \end{itemize}
 
 \FloatBarrier
@@ -543,32 +538,29 @@ The average power is 0.9946 instead of exactly 1, because the 75 CP samples repe
 
 \begin{table}[!htb]
   \centering
-  \caption{Main numbers of both scenarios with the designed CP, from the \texttt{summary.txt} files. ``Expected'' uses \eqref{eq:eqnoise} and \eqref{eq:ser}.}
+  \caption{Both scenarios with the designed CP (\texttt{summary.txt} of each run).}
   \label{tab:compare}
   \small
   \begin{tabular}{lcc}
     \toprule
     & Scenario 1, $\Ncp = 4$ & Scenario 2, $\Ncp = 75$ \\
     \midrule
-    CP overhead                                    & 0.78\%                & 12.78\% \\
-    $\|h\|^2$                                       & 0.858 ($-0.66$ dB)    & 1.091 ($+0.38$ dB) \\
-    $|H[k]|^2$ min / max                           & $-6.3$ / $+1.8$ dB    & $-26.0$ / $+6.2$ dB \\
-    Subcarriers with $|H[k]|^2 < -10$ dB           & 0                     & 27 \\
-    $\SNR_k = \SNR |H[k]|^2$                       & 23.7 to 31.8 dB       & 4.0 to 36.2 dB \\
-    PAPR of $x$                                    & 9.55 dB               & 9.57 dB \\
-    Power of $\yt - H\dt$, measured / expected      & $1.010 / 1.000 \cdot 10^{-3}$ & $1.013 / 1.000 \cdot 10^{-3}$ \\
+    CP overhead                                     & 0.78\%                & 12.78\% \\
+    $|H[k]|^2$ min / max                            & $-6.3$ / $+1.8$ dB    & $-26.0$ / $+6.2$ dB \\
+    Subcarriers with $|H[k]|^2 < -10$ dB            & 0                     & 27 \\
+    $\SNR_k = \SNR\,|H[k]|^2$                       & 23.7 to 31.8 dB       & 4.0 to 36.2 dB \\
+    Power of $\yt - H\dt$ (noise: $1.000 \cdot 10^{-3}$) & $1.010 \cdot 10^{-3}$ & $1.013 \cdot 10^{-3}$ \\
     Mean error after equalizer, measured / expected & $1.52 / 1.52 \cdot 10^{-3}$   & $4.57 / 4.70 \cdot 10^{-3}$ \\
-    Symbol errors in the slot (expected)           & 0 (0.00)              & 1 (3.08) \\
+    Symbol errors in the slot (expected)            & 0 (0.0)               & 1 (3.1) \\
     \bottomrule
   \end{tabular}
 \end{table}
 
 \begin{itemize}
-  \item With the designed CP, both receivers see exactly $\yt = H\dt + \wt$: the disturbance power before
-        the equalizer equals the noise power. The CP removes all ISI and ICI in both scenarios.
-  \item The scenarios differ only in frequency selectivity. The mean channel power is about the same,
-        but Scenario 2 has deep fades, and its only error comes from the deepest one, not from the CP.
-        A real system protects these subcarriers with channel coding across the band.
+  \item With the designed CP, the disturbance before the equalizer is only the noise in both scenarios
+        (Table~\ref{tab:compare}): the CP removes all ISI and ICI.
+  \item The two scenarios differ only in how fast $H[k]$ changes. Scenario 2 has deep fades, and its
+        only error comes from the deepest one, not from the CP.
 \end{itemize}
 
 \FloatBarrier
@@ -577,7 +569,8 @@ The average power is 0.9946 instead of exactly 1, because the 75 CP samples repe
 \label{sec:short}
 % ---------------------------------------------------------------------
 
-The slot is sent over the \emph{same} Scenario 2 channel with the same data, but with $\Ncp = 4$.
+The slot is sent over the \emph{same} Scenario 2 channel, with the same data and noise, but with
+$\Ncp = 4$. Plot (c) is repeated for the same OFDM symbol, $i = 7$.
 
 \begin{figure}[!htb]
   \centering
@@ -602,8 +595,8 @@ The slot is sent over the \emph{same} Scenario 2 channel with the same data, but
   \includegraphics[width=\textwidth]{scenario2_cp4/equalization_error.pdf}
   \caption{Scenario 2 with a too short CP ($\Ncp = 4$), extra figure for Task 5(d): error power after
     the equalizer on every subcarrier. Dashed: $(1/\SNR + D[k])/|H[k]|^2$, with the ISI + ICI power
-    $D[k]$ of App.~\ref{app:interference}. Same axes as Fig.~\ref{fig:s2-error}.
-    \textbf{On every subcarrier the expected error is 7.9 to 15.0 dB higher than with $\Ncp = 75$ (median 11.2 dB).}}
+    $D[k]$ of Appendix~\ref{app:interference}. Same axes as Fig.~\ref{fig:s2-error}.
+    \textbf{The error is 7.9 to 15.0 dB higher than with $\Ncp = 75$ on every subcarrier.}}
   \label{fig:short-error}
 \end{figure}
 
@@ -611,140 +604,54 @@ The slot is sent over the \emph{same} Scenario 2 channel with the same data, but
 \eqref{eq:window}, for the first $\ell - 4$ samples of every DFT window they read the previous OFDM
 symbol. This has two effects:
 \begin{itemize}
-  \item \textbf{ISI:} part of symbol $i-1$ enters the DFT window of symbol $i$.
+  \item \textbf{ISI:} part of symbol $i - 1$ enters the DFT window of symbol $i$.
   \item \textbf{ICI:} the window no longer holds a circular convolution of $d_i$, so \eqref{eq:flat} no
         longer holds. The subcarriers are not orthogonal any more, and every $\yt_i[k]$ also gets parts of
-        the other $\dt_i[k']$.
+        the other subcarriers.
 \end{itemize}
-Both add an error $\tilde{e}_i[k]$ to \eqref{eq:flat}: $\yt_i[k] = H[k]\dt_i[k] + \tilde{e}_i[k] + \wt_i[k]$. Its power
-$D[k]$ is derived in Appendix~\ref{app:interference}. It is not reduced by more transmit power, because
-it grows with the signal: it is an error floor.
-
-\begin{table}[!htb]
-  \centering
-  \caption{ISI + ICI power of each tap beyond the CP, $(2/N)|h[\ell]|^2(\ell - \Ncp)$, for $\Ncp = 4$
-    (\texttt{scenario2\_cp4/summary.txt}).}
-  \label{tab:tapshare}
-  \small
-  \begin{tabular}{ccccc}
-    \toprule
-    Tap $\ell$ & $|h[\ell]|^2$ & Excess delay $\ell - \Ncp$ & Power ($10^{-3}$) & Share \\
-    \midrule
-     5 & 0.0937 &  1 & 0.37          & 2.7\% \\
-    10 & 0.1430 &  6 & 3.35          & 24.9\% \\
-    20 & 0.0234 & 16 & 1.46          & 10.9\% \\
-    35 & 0.0066 & 31 & 0.81          & 6.0\% \\
-    55 & 0.0349 & 51 & \textbf{6.95} & \textbf{51.8\%} \\
-    75 & 0.0018 & 71 & 0.50          & 3.7\% \\
-    \midrule
-    \multicolumn{3}{l}{Total, $\bar{D}$} & 13.44 & 100\% \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+Both add an error to \eqref{eq:flat}, $\yt_i[k] = H[k]\dt_i[k] + \tilde{e}_i[k] + \wt_i[k]$, whose power
+$D[k]$ is derived in Appendix~\ref{app:interference}. Each tap counts with its excess delay $\ell - \Ncp$:
+tap 55 has only 3\% of the channel energy, but it reaches 51 samples into the previous symbol and causes
+52\% of the interference. The interference grows with the signal power, so more transmit power cannot
+remove it.
 
 \begin{table}[!htb]
   \centering
   \caption{Scenario 2 with the designed and with a too short CP: same data, same channel
-    (\texttt{scenario2\_cp75/} and \texttt{scenario2\_cp4/summary.txt}). $^*$The 226 subcarriers with $|H[k]|^2 \ge 0$ dB.}
+    (\texttt{summary.txt} of each run). $^*$The 226 subcarriers with $|H[k]|^2 \ge 0$ dB.}
   \label{tab:short}
   \small
   \begin{tabular}{lcc}
     \toprule
     & $\Ncp = 75$ (Task 5c) & $\Ncp = 4$ (Task 5d) \\
     \midrule
-    ISI + ICI power $\bar{D}$ (mean of $D[k]$)        & 0                                  & $1.344 \cdot 10^{-2}$ ($-18.7$ dB) \\
-    Power of $\yt - H\dt$, measured                   & $1.013 \cdot 10^{-3}$ ($-29.9$ dB)  & $1.275 \cdot 10^{-2}$ ($-18.9$ dB) \\
-    Power of $\yt - H\dt$, expected                 & $1.000 \cdot 10^{-3}$ ($-30.0$ dB)  & $1.444 \cdot 10^{-2}$ ($-18.4$ dB) \\
-    Mean SINR, $\|h\|^2 / (1/\SNR + \bar{D})$         & 30.4 dB                            & 18.8 dB \\
-    SINR per subcarrier                              & 4.0 to 36.2 dB                     & $-10.3$ to 25.7 dB \\
-    Mean error after equalizer, strong subcarriers$^*$ & $5.98 \cdot 10^{-4}$       & $7.61 \cdot 10^{-3}$ \\
-    Symbol errors in OFDM symbol 7                   & 1                                  & 4 \\
-    Symbol errors in the slot (expected)             & 1 (3.1)                            & 39 (50.7) \\
+    ISI + ICI power $\bar{D}$ (mean of $D[k]$)           & 0                                  & $1.344 \cdot 10^{-2}$ ($-18.7$ dB) \\
+    Power of $\yt - H\dt$, measured                      & $1.013 \cdot 10^{-3}$ ($-29.9$ dB) & $1.275 \cdot 10^{-2}$ ($-18.9$ dB) \\
+    Mean SINR, $\|h\|^2 / (1/\SNR + \bar{D})$            & 30.4 dB                            & 18.8 dB \\
+    SINR per subcarrier                                 & 4.0 to 36.2 dB                     & $-10.3$ to 25.7 dB \\
+    Mean error after equalizer, strong subcarriers$^*$  & $5.98 \cdot 10^{-4}$               & $7.61 \cdot 10^{-3}$ \\
+    Symbol errors in OFDM symbol 7                      & 1                                  & 4 \\
+    Symbol errors in the slot                           & 1                                  & 39 \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-\textbf{Numbers} (Tables~\ref{tab:tapshare} and \ref{tab:short}).
+\textbf{Comparison with plot (c) for Scenario 2} (Table~\ref{tab:short}).
 \begin{itemize}
-  \item The ISI + ICI power is $\bar{D} = 1.34 \cdot 10^{-2}$ ($-18.7$ dB), 13 times (11.3 dB) the
-        noise power. The mean SINR drops from 30.4 dB to 18.8 dB, a loss of 11.6 dB.
-  \item Each tap counts with its excess delay $\ell - \Ncp$. Tap 55 has only 3\% of the channel energy,
-        but it reaches 51 samples into the previous symbol and causes half of the interference.
-  \item The measured disturbance, $1.275 \cdot 10^{-2}$, is 12\% below the expected
-        $1.444 \cdot 10^{-2}$. This is the random variation of one slot: \texttt{cp\_sweep.py} sends 200
-        noise-free slots with different random data, and their mean ISI + ICI power is within 0.23\% of
-        $\bar{D}$ (on each subcarrier: measured$/D[k] = 0.998 \pm 0.022$), while one slot varies by 7.2\%.
-  \item The symbol errors rise from 1 to 39 (4 in symbol 7). They are on 10 subcarriers, all in the
-        deepest fades ($-11.8$ to $-26.0$ dB) and next to them, where the SINR is lowest. The expected
-        50.7 treats the ISI + ICI as Gaussian noise, which is only an approximation.
-\end{itemize}
-
-\textbf{Comparison with plot (c) for Scenario 2.}
-\begin{itemize}
-  \item \textbf{Before the equalizer} (Fig.~\ref{fig:short-rx} against Fig.~\ref{fig:s2-rx}) the two plots
-        look almost the same. The extra disturbance ($-18.9$ dB) is small next to $|\yt| \approx |H| \approx 1$,
-        and the cloud is already spread by the channel.
-  \item \textbf{After the equalizer} (Fig.~\ref{fig:short-eq} against Fig.~\ref{fig:s2-eq}) the
+  \item \textbf{Before the equalizer} (Fig.~\ref{fig:short-rx} against Fig.~\ref{fig:s2-rx}), the two plots
+        look almost the same. The extra disturbance ($-18.9$ dB) is small next to $|\yt| \approx 1$, and the
+        cloud is already spread by the channel.
+  \item \textbf{After the equalizer} (Fig.~\ref{fig:short-eq} against Fig.~\ref{fig:s2-eq}), the
         difference is clear. With $\Ncp = 75$ only the faded subcarriers were spread. With $\Ncp = 4$
-        every cluster is wide, also on strong subcarriers (green and yellow points): on the 226 subcarriers
-        with $|H[k]|^2 \ge 0$ dB the mean error is 12.7 times (11.0 dB) larger.
-  \item \textbf{Why.} The spread is no longer set by the noise alone. The error after the equalizer is
-        $(1/\SNR + D[k])/|H[k]|^2$, and $D[k]$ is about 13 times the noise. Fig.~\ref{fig:short-error}
-        shows this: the error follows the new dashed line, 7.9 to 15.0 dB above Fig.~\ref{fig:s2-error}
-        (median 11.2 dB), because $D[k]$ itself varies from $-22.8$ to $-15.2$ dB over the subcarriers.
-        Even the best subcarrier is limited to an SINR of 25.7 dB, against 36.2 dB with the correct CP.
-\end{itemize}
-
-\subsubsection*{Extra: every CP length from 0 to 80}
-\label{sec:sweep}
-
-Fig.~\ref{fig:sweep} checks the CP design of Task 1 by simulation: \texttt{cp\_sweep.py} sends the same
-slot with every $\Ncp$ from 0 to 80 (same data, channels and noise seed).
-
-\begin{figure}[!htb]
-  \centering
-  \includegraphics[width=0.85\textwidth]{cp_sweep/cp_sweep.pdf}
-  \caption{Both scenarios with every CP length from 0 to 80 samples. Top: power of $\yt_i[k] - H[k]\dt_i[k]$
-    (noise + ISI + ICI) over the OFDM symbols 1--13, measured (markers) and expected $1/\SNR + \bar{D}$
-    (lines). Bottom: symbol errors in the slot, measured and expected from \eqref{eq:ser}. Dashed
-    vertical lines: designed $\Ncp = 4$ (Scenario 1) and 75 (Scenario 2); $\Ncp = 4$ is also the CP of
-    Task 5(d). \textbf{The interference ends exactly at $\Ncp = L - 1$; beyond that a longer CP changes
-    nothing.}}
-  \label{fig:sweep}
-\end{figure}
-
-\begin{table}[!htb]
-  \centering
-  \caption{Scenario 2: selected points of Fig.~\ref{fig:sweep} (\texttt{cp\_sweep/summary.txt}).}
-  \label{tab:sweep}
-  \small
-  \begin{tabular}{ccccc}
-    \toprule
-    & \multicolumn{2}{c}{Power of $\yt - H\dt$ (dB)} & \multicolumn{2}{c}{Symbol errors in the slot} \\
-    \cmidrule(lr){2-3} \cmidrule(lr){4-5}
-    $\Ncp$ & measured & expected & measured & expected \\
-    \midrule
-     0 & $-16.5$ & $-16.2$ & 51 & 64.5 \\
-     4 & $-18.9$ & $-18.4$ & 39 & 50.7 \\
-    10 & $-20.8$ & $-20.4$ & 31 & 37.2 \\
-    20 & $-22.1$ & $-21.8$ & 20 & 28.3 \\
-    36 & $-23.9$ & $-24.1$ & 15 & 16.8 \\
-    55 & $-29.4$ & $-29.4$ &  2 & 3.8 \\
-    74 & $-29.9$ & $-30.0$ &  1 & 3.1 \\
-    75 & $-29.9$ & $-30.0$ &  1 & 3.1 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-\begin{itemize}
-  \item \textbf{Scenario 1}: the interference is gone at $\Ncp = 4$. From there on the disturbance is
-        the noise ($-30.0$ dB) for every longer CP, and there are no errors.
-  \item \textbf{Scenario 2}: the interference falls step by step as $\Ncp$ passes the tap delays and reaches
-        the noise level exactly at $\Ncp = 75$. The steep drop between 35 and 55 is the strong tap 55 of this
-        realization. With the NR-like CP of 36 samples there are still 15 errors instead of 1.
-  \item The measured power follows the expected curve at every $\Ncp$, which confirms the formula of
-        Appendix~\ref{app:interference}. The expected error counts use the Gaussian approximation; the
-        measured counts are 10--30\% lower for short CPs but follow the same trend.
+        every cluster is wide, also on the strong subcarriers (green and yellow points): there the mean
+        error is 12.7 times (11.0 dB) larger.
+  \item \textbf{Why.} The error after the equalizer is now $(1/\SNR + D[k])/|H[k]|^2$, and the ISI + ICI
+        power $D[k]$ is about 13 times the noise. So the spread is no longer set by the noise alone.
+        Fig.~\ref{fig:short-error} shows that the error follows the new dashed line, 7.9 to 15.0 dB above
+        Fig.~\ref{fig:s2-error}. The mean SINR drops from 30.4 dB to 18.8 dB, and even the best
+        subcarrier is limited to 25.7 dB.
+  \item \textbf{Symbol errors.} They rise from 1 to 39. They are on 10 subcarriers, all in or next to the
+        deepest fades ($-11.8$ to $-26.0$ dB), where the SINR is lowest.
 \end{itemize}
 
 \FloatBarrier
@@ -810,7 +717,8 @@ and averaging over the channel ($\E|h[\ell]|^2 = \sigma_\ell^2$) gives \eqref{eq
         SINR $|H[k]|^2 / (1/\SNR + D[k])$.
 \end{itemize}
 \texttt{interference\_power\_per\_subcarrier} in \texttt{Task-1/cp\_design.py} computes \eqref{eq:dk}
-with one FFT per $q$. The check in Sec.~\ref{sec:short} confirms it: over 200 noise-free slots of random
-data, the measured ISI + ICI power is within 0.23\% of $\bar{D}$.
+with one FFT per $q$. \texttt{Task-5/cp\_sweep.py} checks it by simulation: over 200 noise-free slots
+of random data, the measured ISI + ICI power is within 0.23\% of $\bar{D}$, and within about 2\% of
+$D[k]$ on each subcarrier.
 
 \end{document}

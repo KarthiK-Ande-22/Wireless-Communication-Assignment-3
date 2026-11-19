@@ -1,12 +1,4 @@
-"""Task 5: main script. Sends one slot through the OFDM link of Tasks 2-4 for
-a given scenario and CP length, and makes all figures of Task 5 (a)-(c).
-
-    python3 Task-5/main.py --scenario 1            # CP designed in Task 1
-    python3 Task-5/main.py --scenario 2
-    python3 Task-5/main.py --scenario 2 --cp 4     # Task 5(d)
-
-Figures and a summary of all numbers go to Task-5/results/scenario<S>_cp<Ncp>/.
-"""
+"""Task 5 main script: python3 Task-5/main.py --scenario S [--cp NCP] makes all figures of one run."""
 import argparse
 import sys
 from dataclasses import dataclass
@@ -15,7 +7,7 @@ from pathlib import Path
 import numpy as np
 from scipy.special import erfc
 
-# The blocks of the link are in the folders of Tasks 1-4; make them importable
+# The blocks of the link are in the folders of Tasks 1-4
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 for folder in ["", "Task-1", "Task-2", "Task-3", "Task-4"]:
     sys.path.append(str(PROJECT_ROOT / folder))
@@ -31,8 +23,7 @@ import plots
 
 RESULTS_FOLDER = Path(__file__).resolve().parent / "results"
 
-# y-axis of the equalization error plot (dB). Both Scenario 2 runs share the
-# same axis, so the plots of Task 5(c) and 5(d) can be compared directly.
+# y-axis (dB) of the equalization error plot; both Scenario 2 runs share it for comparison
 ERROR_PLOT_LIMITS = {1: (-60, -10), 2: (-60, 15)}
 
 
@@ -59,13 +50,13 @@ def run_link(scenario, cp_length):
     data = generate_data(NUM_DATA_SYMBOLS, np.random.default_rng(DATA_SEED))
     x, grid = ofdm_transmitter(data, NUM_SUBCARRIERS, cp_length)
 
-    # Task 3: channel (one realization, fixed seed per scenario)
+    # Task 3: channel, one realization with a fixed seed per scenario
     taps = channel_taps(profile["tap_delays"], profile["tap_powers"],
                         np.random.default_rng(CHANNEL_SEEDS[scenario]))
     response = frequency_response(taps, NUM_SUBCARRIERS)
     y = multipath_channel(x, taps, SNR, np.random.default_rng(NOISE_SEED))
 
-    # Task 4: receiver, followed by a 4-QAM decision to count symbol errors
+    # Task 4: receiver, then a 4-QAM decision to count symbol errors
     estimate, received_grid, equalized_grid = ofdm_receiver(
         y, response, NUM_SUBCARRIERS, cp_length, NUM_OFDM_SYMBOLS)
     detected = detect_symbols(estimate, qam4_constellation())
@@ -74,26 +65,24 @@ def run_link(scenario, cp_length):
                        equalized_grid, estimate, detected)
 
 
-# ---------------------------------------------------------------------------
 # Numbers for the report
-# ---------------------------------------------------------------------------
+
 def qfunc(value):
-    """Gaussian tail function Q(x) = 0.5 erfc(x / sqrt(2))."""
+    """Return the Gaussian tail function Q(x) = 0.5 erfc(x / sqrt(2))."""
     return 0.5 * erfc(value / np.sqrt(2))
 
 
 def qam4_error_probability(snr):
-    """4-QAM symbol error probability for a given SNR: 2 Q(sqrt(snr)) - Q(sqrt(snr))^2."""
+    """Return the 4-QAM symbol error probability 2 Q(sqrt(snr)) - Q(sqrt(snr))^2."""
     q = qfunc(np.sqrt(snr))
     return 2 * q - q ** 2
 
 
 def analyse(signals, cp_length):
-    """Compute every number quoted in the report for one run."""
+    """Return every number quoted in the report for one run."""
     noise_power = 1 / SNR
     channel_power = np.abs(signals.response) ** 2
-    # Averages use the OFDM symbols 1..13: nothing is sent before symbol 0, so
-    # with a too short CP it sees only half of the ISI + ICI
+    # Averages use symbols 1-13: symbol 0 has nothing before it, so it sees only half the ISI + ICI
     later_symbols = slice(1, NUM_OFDM_SYMBOLS)
 
     # ISI + ICI power per subcarrier predicted from the channel (zero if Ncp >= L - 1)
@@ -105,8 +94,7 @@ def analyse(signals, cp_length):
     error_power = np.abs(signals.equalized_grid - signals.grid) ** 2
     predicted_error = (noise_power + interference) / channel_power
 
-    # Symbol errors, per OFDM symbol, and the expected number from the SINR of
-    # every subcarrier (symbol 0 sees only half of the ISI + ICI)
+    # Symbol errors per OFDM symbol, and the expected number from the SINR of every subcarrier
     errors = (signals.detected != signals.data).reshape(NUM_OFDM_SYMBOLS, NUM_SUBCARRIERS)
     sinr = channel_power / (noise_power + interference)
     sinr_first_symbol = channel_power / (noise_power + interference / 2)
@@ -220,7 +208,7 @@ def write_summary(scenario, cp_length, signals, numbers, folder):
             lines.append(f"    {l:2d}   {abs(signals.taps[l]) ** 2:.4f}   {l - cp_length:7d}"
                          f"   {power:.2e}   {100 * power / sum(tap_terms.values()):5.1f} %")
 
-        # How much higher the expected error is than with noise only
+        # How much larger the expected error is than with noise only
         interference = n["interference"]
         increase_db = 10 * np.log10(1 + interference * SNR)
         lines += [
@@ -235,12 +223,12 @@ def write_summary(scenario, cp_length, signals, numbers, folder):
 
 
 def make_figures(scenario, cp_length, signals, numbers, folder):
-    """All figures of Task 5 (a)-(c) for one run."""
+    """Make all figures of Task 5 (a)-(c) for one run."""
     profile = CHANNEL_PROFILES[scenario]
     name = f"Scenario {scenario}, $N_{{cp}} = {cp_length}$"
     i = PLOT_SYMBOL
 
-    # Same colour scale for all scatter plots of one scenario
+    # Same colour scale for both scatter plots of a run
     power_db = 10 * np.log10(np.abs(signals.response) ** 2)
     color_range = (np.floor(power_db.min()), np.ceil(power_db.max()))
 
