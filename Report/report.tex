@@ -43,41 +43,36 @@
 \section{Overview}
 % =====================================================================
 
-\textbf{What.} This assignment builds a simplified OFDM link for the downlink of a 5G NR-like system,
-from scratch in Python: transmitter, multipath channel and receiver. One slot of 14 OFDM symbols is
-sent. Each OFDM symbol has $N = 512$ subcarriers ($W = 15.36$~MHz, $\Delta f = 30$~kHz), so a slot
-carries $14 \times 512 = 7168$ 4-QAM symbols. The SNR is 30~dB. Two channels are used:
-\begin{itemize}
-  \item \textbf{Scenario 1}, a short channel: taps up to a delay of 4 samples (0.26~$\mu$s);
-  \item \textbf{Scenario 2}, a long channel: taps up to a delay of 75 samples (4.88~$\mu$s).
-\end{itemize}
+This assignment builds a simplified OFDM link for the downlink of a 5G NR-like system, from scratch
+in Python: a transmitter, a multipath channel and a receiver. One slot of 14 OFDM symbols is sent. Each
+OFDM symbol has $N = 512$ subcarriers ($W = 15.36$~MHz, $\Delta f = 30$~kHz), so a slot carries
+$14 \times 512 = 7168$ 4-QAM symbols, at an SNR of 30~dB. Two channels are used: a short one in
+Scenario 1, with taps up to a delay of 4 samples (0.26~$\mu$s), and a long one in Scenario 2, with taps
+up to a delay of 75 samples (4.88~$\mu$s).
 
-\textbf{Why OFDM.} A multipath channel spreads every transmitted sample over the next samples. At
-this rate one sample lasts only 65~ns, so in Scenario 2 one sample would disturb up to 75 later ones,
-and a long equalizer would be needed. OFDM sends the data on many narrow subcarriers instead. Each
-subcarrier is only 30~kHz wide, so the channel is flat over it: it only multiplies the subcarrier by one
+A multipath channel spreads every transmitted sample over the next samples. At this rate one sample
+lasts only 65~ns, so in Scenario 2 one sample would disturb up to 75 later ones, and a single-carrier
+receiver would need a long equalizer. OFDM avoids this by sending the data on many narrow subcarriers.
+Each subcarrier is only 30~kHz wide, so the channel is flat over it and only multiplies it by one
 complex gain $H[k]$.
 
-\textbf{Why a cyclic prefix.} Each OFDM symbol starts with a copy of its last $\Ncp$ samples. If the CP
-is at least as long as the channel, the previous OFDM symbol does not leak into the current one, and
-after the DFT every subcarrier is simply $\yt_i[k] = H[k]\,\dt_i[k] + \wt_i[k]$. Then the receiver only
-has to divide by $H[k]$ (one-tap equalizer). But the CP carries no new data, so it should be as short as
-possible. Choosing its length is the main design question.
+For this to work, each OFDM symbol starts with a cyclic prefix (CP), a copy of its last $\Ncp$ samples.
+If the CP is at least as long as the channel, the previous OFDM symbol does not leak into the current
+one, and after the DFT every subcarrier is simply $\yt_i[k] = H[k]\,\dt_i[k] + \wt_i[k]$. The receiver
+then only has to divide by $H[k]$ (one-tap equalizer). But the CP carries no new data, so it should be
+as short as possible, and choosing its length is the main design question.
 
-\textbf{What is done.}
-\begin{itemize}
-  \item \textbf{Task 1:} the CP length for both channels, and why.
-  \item \textbf{Tasks 2--4:} the transmitter, the channel and the receiver, one function per block of
-        Figs.~2 and 3 of the assignment.
-  \item \textbf{Task 5:} the channel, the transmitted signal and the equalized symbols for both scenarios,
-        and what goes wrong with a CP that is too short ($\Ncp = 4$ on the Scenario 2 channel).
-\end{itemize}
+The report follows the tasks of the assignment. Task 1 chooses the CP length for both channels and
+explains why. Tasks 2--4 describe the transmitter, the channel and the receiver, with one function per
+block of Figs.~2 and 3 of the assignment. Task 5 shows the channel, the transmitted signal and the
+equalized symbols for both scenarios, and what goes wrong when the CP is too short ($\Ncp = 4$ on the
+Scenario 2 channel).
 
-\textbf{Conventions.} The DFT is unitary, as in Section 4 of the assignment:
-$F^H \dt = \sqrt{N}\,\texttt{ifft}(\dt)$, $F y = \texttt{fft}(y)/\sqrt{N}$ and $H[k] = \texttt{fft}(h, N)$.
-So the transmitted signal has power 1, and the SNR is the SNR per subcarrier. Fixed random seeds make
-every figure and number reproducible; the data and the channel stay the same when only the CP changes.
-The README lists the seeds and the commands.
+Throughout, the DFT is unitary, as in Section 4 of the assignment: $F^H \dt = \sqrt{N}\,\texttt{ifft}(\dt)$,
+$F y = \texttt{fft}(y)/\sqrt{N}$ and $H[k] = \texttt{fft}(h, N)$. With this scaling the transmitted
+signal has power 1, and the SNR is the SNR per subcarrier. Fixed random seeds make every figure and
+number reproducible, and the data and the channel stay the same when only the CP changes. The README
+lists the seeds and the commands.
 
 % =====================================================================
 \section{Task 1 --- CP length}
