@@ -384,33 +384,43 @@ checked in Table~\ref{tab:checks}.
 \section{Task 4 --- Receiver}
 % =====================================================================
 
-The receiver (\texttt{Task-4/receiver.py}) has one function per block of Fig.~3 of the assignment.
+The receiver is in \texttt{Task-4/receiver.py}. It knows the channel taps $h$. Each block of Fig.~3
+is one function.
 \begin{enumerate}[label=(\alph*)]
-  \item \textbf{OFDM demodulation}: \texttt{split\_into\_blocks} reshapes the first $14(N + \Ncp)$
-        samples of $y$ into 14 columns $y_i$; \texttt{remove\_cyclic\_prefix} drops the first $\Ncp$
-        rows; \texttt{ofdm\_demodulate} computes $\yt_i = F y_{c,i} = \texttt{fft}(y_{c,i})/\sqrt{N}$.
-  \item \textbf{Equalization} (\texttt{equalize}): $\deq_i[k] = \yt_i[k]/H[k]$, with the same $H[k]$
-        for all 14 symbols.
-  \item \textbf{Demapping} (\texttt{demap\_resource\_grid}): $\hat{s}[Ni + k] = \deq_i[k]$, the
-        inverse of the grid mapping.
+  \item \textbf{OFDM demodulation.}
+        \begin{itemize}
+          \item \texttt{split\_into\_blocks}: the first $14(N + \Ncp)$ samples of $y$ are cut into 14 blocks
+                $y_i$ of $N + \Ncp$ samples. The last $L - 1$ samples of $y$ are not used.
+          \item \texttt{remove\_cyclic\_prefix}: the first $\Ncp$ samples of each $y_i$ are dropped, which
+                leaves $y_{c,i}$ with $N$ samples.
+          \item \texttt{ofdm\_demodulate}: $\yt_i = F y_{c,i}$. NumPy's \texttt{fft} has no factor
+                $1/\sqrt{N}$, so $F y_{c,i} = \texttt{fft}(y_{c,i})/\sqrt{N}$.
+        \end{itemize}
+  \item \textbf{Equalization} (\texttt{equalize}). $\deq_i[k] = \yt_i[k]/H[k]$ on every subcarrier, with
+        $H[k] = \texttt{fft}(h, N)$ from Task 3. The channel does not change during the slot, so the
+        same $H[k]$ is used for all 14 symbols.
+  \item \textbf{Demapping} (\texttt{demap\_resource\_grid}). $\hat{s}[Ni + k] = \deq_i[k]$: the 14 columns
+        are put one after the other, which undoes the mapping of Task 2(b).
 \end{enumerate}
+Every block is checked in Table~\ref{tab:checks}. Without noise, the receiver gets $s$ back exactly
+with $\Ncp = L - 1$, but not with a CP one sample shorter.
 
-\textbf{Noise after the equalizer.} With \eqref{eq:flat}, the equalized value is the data symbol plus
-scaled noise:
+\textbf{Noise after the equalizer.} With the CP of Task 1, \eqref{eq:flat} holds, so the equalized
+value is the data symbol plus the noise divided by $H[k]$:
 \begin{equation}
   \deq_i[k] = \dt_i[k] + \frac{\wt_i[k]}{H[k]}, \qquad
   \E\big|\deq_i[k] - \dt_i[k]\big|^2 = \frac{1}{\SNR\, |H[k]|^2}, \qquad
   \SNR_k = \SNR\, |H[k]|^2.
   \label{eq:eqnoise}
 \end{equation}
-The equalizer divides signal and noise by the same $H[k]$, so it does not change the SNR of a
-subcarrier. It only removes the rotation and scaling of the channel, so that the fixed 4-QAM decision
-regions can be used. A faded subcarrier keeps its low SNR: its noise is multiplied by $1/|H[k]|$
-(noise enhancement).
+Dividing by $H[k]$ removes the rotation and scaling of the channel, so the fixed 4-QAM decision
+regions can be used. It does not change the SNR of a subcarrier, because signal and noise are divided
+by the same number. On a faded subcarrier (small $|H[k]|$) the noise becomes large (noise
+enhancement). This explains the spread of the equalized values in Task 5(c).
 
-\textbf{Symbol errors.} To compare the runs, $\hat{s}$ goes to the minimum-distance 4-QAM detector of
-Assignment 2 (\texttt{detect\_symbols}); this is not part of Fig.~3. On a subcarrier with SNR $\SNR_k$,
-the error probability is the 4-QAM result of Assignment 2,
+\textbf{Symbol errors (extra).} Fig.~3 ends at $\hat{s}$. To compare the runs in Task 5, $\hat{s}$ is
+also passed to the minimum-distance 4-QAM detector of Assignment 2 (\texttt{detect\_symbols}), and the
+errors are counted. On a subcarrier with SNR $\SNR_k$, the 4-QAM error probability is
 \begin{equation}
   P_e(\SNR_k) = 2Q\big(\sqrt{\SNR_k}\big) - Q^2\big(\sqrt{\SNR_k}\big),
   \label{eq:ser}
