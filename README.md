@@ -17,7 +17,7 @@ for one slot of 14 OFDM symbols with N = 512 subcarriers (W = 15.36 MHz,
 | 2 | OFDM transmitter | [Task-2/transmitter.py](Task-2/transmitter.py) |
 | 3 | Multipath channel | [Task-3/channel.py](Task-3/channel.py) |
 | 4 | OFDM receiver | [Task-4/receiver.py](Task-4/receiver.py) |
-| 5 | Results (main script) | [Task-5/main.py](Task-5/main.py), [Task-5/cp_sweep.py](Task-5/cp_sweep.py) |
+| 5 | Results (main script) | [Task-5/main.py](Task-5/main.py), [Task-5/plots.py](Task-5/plots.py) |
 
 ## Results at a glance
 
@@ -38,7 +38,7 @@ project root.
 ```bash
 pip install numpy scipy matplotlib
 
-bash run_all.sh                          # all tasks, under a minute
+bash run_all.sh                          # all tasks, about 25 s
 
 cd Report && pdflatex report.tex && pdflatex report.tex     # the report
 ```
@@ -84,7 +84,7 @@ Re-running the scripts reproduces every figure and number byte for byte.
 | numpy | 2.3.4 | signals; `fft` and `ifft` (scaled to be unitary) and `convolve` |
 | scipy | 1.16.3 | only `scipy.special.erfc`, for the Q-function |
 | matplotlib | 3.10.7 | figures (Computer Modern font ships with it) |
-| TeX Live | 2023 | report only: `pdflatex` with `amsmath`, `booktabs`, `caption`, `graphicx`, `hyperref` |
+| TeX Live | 2023 | report only: `pdflatex` with `amsmath`, `booktabs`, `caption`, `subcaption`, `enumitem`, `graphicx`, `hyperref` |
 
 No built-in OFDM or 5G function is used.
 
@@ -92,19 +92,29 @@ No built-in OFDM or 5G function is used.
 
 | Command | Reproduces | Output folder | Time |
 |---|---|---|---:|
-| `python3 Task-1/cp_design.py` | Task 1: CP design, candidate CP lengths (SINR, overhead), Monte Carlo check | `Task-1/results/` | ~12 s |
-| `python3 Task-2/transmitter.py` | Task 2: check of every transmitter block | `Task-2/results/` | <1 s |
-| `python3 Task-3/channel.py` | Task 3: channel realizations and checks | `Task-3/results/` | ~2 s |
-| `python3 Task-4/receiver.py` | Task 4: noise-free loopback check | `Task-4/results/` | <1 s |
-| `python3 Task-5/main.py --scenario 1` | Task 5 (a)-(c), Scenario 1 | `Task-5/results/scenario1_cp4/` | ~5 s |
-| `python3 Task-5/main.py --scenario 2` | Task 5 (a)-(c), Scenario 2 | `Task-5/results/scenario2_cp75/` | ~5 s |
-| `python3 Task-5/main.py --scenario 2 --cp 4` | Task 5 (d) | `Task-5/results/scenario2_cp4/` | ~4 s |
-| `python3 Task-5/cp_sweep.py` | extra: Ncp from 0 to 80, check of the ISI formula | `Task-5/results/cp_sweep/` | ~2 s |
+| `python3 Task-1/cp_design.py` | Task 1: CP length, overhead and SINR of shorter CPs (Tables 1–2); Fig. 1 with a Monte Carlo check over 1000 channels | `Task-1/results/` | ~11 s |
+| `python3 Task-2/transmitter.py` | Task 2: check of every transmitter block (mapping, IDFT, CP, concatenation) for Ncp = 4 and 75 | `Task-2/results/` | <1 s |
+| `python3 Task-3/channel.py` | Task 3: the channel realization of each scenario; checks of the taps, H[k], the convolution (against the sum formula) and the noise | `Task-3/results/` | ~1 s |
+| `python3 Task-4/receiver.py` | Task 4: noise-free check of the whole link with Ncp = L - 1 and one sample less; DFT check | `Task-4/results/` | <1 s |
+| `python3 Task-5/main.py --scenario 1` | Task 5 (a)-(c), Scenario 1 | `Task-5/results/scenario1_cp4/` | ~3 s |
+| `python3 Task-5/main.py --scenario 2` | Task 5 (a)-(c), Scenario 2 | `Task-5/results/scenario2_cp75/` | ~3 s |
+| `python3 Task-5/main.py --scenario 2 --cp 4` | Task 5 (d) | `Task-5/results/scenario2_cp4/` | ~3 s |
+| `python3 Task-5/cp_sweep.py` | extra: the link for every Ncp from 0 to 80, and the check of the ISI + ICI formula quoted in Appendix A | `Task-5/results/cp_sweep/` | ~2 s |
 
-Each run of `main.py` writes six figures (`channel_taps`, `frequency_response`,
-`transmitted_signal`, `received_symbols`, `equalized_symbols`,
-`equalization_error`) as `.pdf` (used in the report) and `.png`, and a
-`summary.txt` with every number quoted in the report.
+Each run of `main.py` writes six figures as `.pdf` (used in the report) and
+`.png`, and a `summary.txt` with every number quoted in the report:
+
+| Figure | Task 5 part |
+|---|---|
+| `channel_taps` | (a) \|h[l]\| against the tap index |
+| `frequency_response` | (a) \|H[k]\|² in dB against the subcarrier index |
+| `transmitted_signal` | (b) \|x[m]\| of the whole slot; below it, a zoom on OFDM symbol 0 that shows the CP is a copy of its last Ncp samples |
+| `received_symbols` | (c) received values ỹ₇[k], before the equalizer |
+| `equalized_symbols` | (c) equalized values with the 4-QAM points |
+| `equalization_error` | extra: error after the equalizer on every subcarrier, with its expected value |
+
+Runs on the same channel use the same axes for the scatter and error plots, so
+the report can show Task 5(c) (Ncp = 75) and Task 5(d) (Ncp = 4) side by side.
 
 ## Repository layout
 
@@ -116,7 +126,7 @@ Each run of `main.py` writes six figures (`channel_taps`, `frequency_response`,
 ├── plot_style.py                common figure style
 ├── run_all.sh                   runs all tasks
 ├── Task-1/
-│   └── cp_design.py             Task 1: CP length, ISI + ICI power and SINR of a short CP
+│   └── cp_design.py             Task 1: CP length, ISI + ICI power and SINR of shorter CPs
 ├── Task-2/
 │   └── transmitter.py           Task 2: data, grid mapping, IDFT, CP, concatenation
 ├── Task-3/
@@ -132,6 +142,10 @@ Each run of `main.py` writes six figures (`channel_taps`, `frequency_response`,
     ├── report.tex
     └── report.pdf
 ```
+
+Each `Task-N/results/` folder holds what that task's script writes. The report
+reads its figures directly from `Task-1/results/` and `Task-5/results/`, so
+after `bash run_all.sh` a new `pdflatex` run picks up the new figures.
 
 ## How the code works
 
@@ -152,6 +166,19 @@ y -> split_into_blocks -> remove_cyclic_prefix -> ofdm_demodulate (F) -> equaliz
 - The symbol errors are counted after a minimum-distance 4-QAM decision (the
   detector of Assignment 2). This decision is not part of Fig. 3; it only helps
   to compare the runs.
+- Running a file of Tasks 2-4 on its own checks its blocks and writes the
+  result to its `results/` folder.
+
+## Report
+
+[Report/report.pdf](Report/report.pdf), 15 pages:
+
+1. **Overview**: what the link is, and why OFDM and a cyclic prefix are used
+2. **Task 1**: the condition Ncp ≥ L - 1, the CP design, and why not shorter or longer
+3. **Tasks 2-4**: the transmitter, the channel (with its realizations) and the receiver
+4. **Task 5**: (a)-(c) for each scenario, a comparison of the two, and (d) with the
+   designed and the short CP side by side
+5. **Summary**, and **Appendix A**: the ISI + ICI power of a too short CP
 
 ## Main results
 
@@ -163,6 +190,8 @@ y -> split_into_blocks -> remove_cyclic_prefix -> ofdm_demodulate (F) -> equaliz
 | \|H[k]\|² of the realization | −6.3 to +1.8 dB | −26.0 to +6.2 dB |
 | Symbol errors in the slot (7168 symbols) | 0 | 1 (on the deepest fade, k = 450) |
 
+- **Task 1:** a shorter CP costs SINR. In Scenario 2 the 5G NR normal CP of 36
+  samples would give 26.4 dB instead of 30 dB.
 - **Task 5(c):** after the equalizer the noise on subcarrier k has variance
   1/(SNR |H[k]|²), so the points of strong subcarriers form tight clusters and
   the points of faded subcarriers are spread far from the 4-QAM points.
