@@ -276,7 +276,7 @@ and Fig.~\ref{fig:interference} compare candidate CP lengths.
 So every CP sample up to $L - 1$ pays for itself, and $\Ncp = L - 1$ gives the full SNR of 30 dB.
 
 \textbf{Why not longer.} In this model (perfect timing, exact channel) a CP longer than $L-1$ brings
-nothing: the SINR is already 30 dB (Fig.~\ref{fig:interference}, bottom). It only costs time and energy:
+nothing: the SINR is already 30 dB (Fig.~\ref{fig:interference}(b)). It only costs time and energy:
 0.78\% (0.03 dB) in Scenario 1 and 12.78\% (0.59 dB) in Scenario 2. A real system would add a few
 samples of margin for timing errors and filter tails.
 
@@ -289,14 +289,14 @@ $-28.9$ dB, as large as the noise, and the SINR would drop to 26.4 dB.
 and receiver of Tasks 2--4 without noise, for 1000 random channel realizations (seed 2030) and 6
 (Scenario 1) and 15 (Scenario 2) CP lengths. The measured ISI + ICI power agrees with \eqref{eq:pint}
 within 2.6\% at every simulated $\Ncp$, and the SINR within 0.1 dB; at $\Ncp \ge L - 1$ the measured
-power is $10^{-31}$, i.e.\ zero up to rounding errors (markers in Fig.~\ref{fig:interference}).
+power is $10^{-31}$, i.e.\ zero up to rounding errors (markers in Fig.~\ref{fig:interference}(a) and (b)).
 
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=0.85\textwidth]{interference_vs_cp.pdf}
-  \caption{Task 1, both scenarios: average ISI + ICI power per subcarrier (top) and average SINR (bottom)
-    against the CP length. Lines: formula \eqref{eq:pint}; markers: simulation of the link over 1000 random
-    channel realizations. Dash-dot: noise power $1/\SNR$ (top) and SNR = 30 dB (bottom). Dashed: the chosen
+  \caption{Task 1, both scenarios, against the CP length: (a) average ISI + ICI power per subcarrier and
+    (b) average SINR per subcarrier. Lines: formula \eqref{eq:pint}; markers: simulation of the link over 1000 random
+    channel realizations. Dash-dot: noise power $1/\SNR$ in (a) and SNR = 30 dB in (b). Dashed: the chosen
     $\Ncp = L - 1$ (4 and 75), from where the interference is exactly zero. Dotted: the 5G NR normal CP of
     36 samples. \textbf{Every CP sample below $L-1$ costs SINR; at $\Ncp = L - 1$ the SINR reaches 30 dB,
     and a longer CP brings nothing.}}

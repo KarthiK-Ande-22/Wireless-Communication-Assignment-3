@@ -252,10 +252,12 @@ def monte_carlo_summary(simulated):
 
 
 def plot_interference_and_sinr(simulated):
-    """Top: average ISI + ICI power. Bottom: average SINR. Both against Ncp."""
+    """Panel (a): average ISI + ICI power. Panel (b): average SINR. Both against Ncp."""
     noise_power_db = db(1 / SNR)
-    fig, (ax_power, ax_sinr) = plt.subplots(2, 1, figsize=(7.5, 6.6), sharex=True,
-                                            gridspec_kw={"height_ratios": [3, 2]})
+    fig, (ax_power, ax_sinr) = plt.subplots(2, 1, figsize=(7.5, 7.2), sharex=True,
+                                            gridspec_kw={"height_ratios": [3, 2]},
+                                            layout="constrained")
+    fig.suptitle("Task 1: effect of the CP length (average over the channel)")
 
     for scenario, color, marker in [(1, BLUE, "o"), (2, ORANGE, "s")]:
         profile = CHANNEL_PROFILES[scenario]
@@ -302,13 +304,14 @@ def plot_interference_and_sinr(simulated):
 
     ax_power.set_ylim(-55, -10)
     ax_power.set_ylabel("average ISI + ICI power (dB)")
-    ax_power.set_title("Task 1: effect of the CP length (average over the channel)")
+    ax_power.set_title("(a) Average ISI + ICI power per subcarrier")
     ax_power.legend(loc="upper right", fontsize=8, ncol=2)
 
     ax_sinr.set_xlim(-1, 85)
     ax_sinr.set_ylim(12, 32)
     ax_sinr.set_xlabel("CP length $N_{cp}$ (samples)")
     ax_sinr.set_ylabel("average SINR (dB)")
+    ax_sinr.set_title("(b) Average SINR per subcarrier")
     ax_sinr.legend(loc="lower right", fontsize=8, ncol=2)
     save_figure(fig, RESULTS_FOLDER, "interference_vs_cp")
 
