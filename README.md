@@ -72,6 +72,7 @@ exactly the same when only the CP length changes:
 | Channel taps, Scenario 1 | **2027** |
 | Channel taps, Scenario 2 | **2028** |
 | Noise | **2029** |
+| Task 1 Monte Carlo check (1000 random channels) | **2030** |
 
 Re-running the scripts reproduces every figure and number byte for byte.
 
@@ -91,7 +92,7 @@ No built-in OFDM or 5G function is used.
 
 | Command | Reproduces | Output folder | Time |
 |---|---|---|---:|
-| `python3 Task-1/cp_design.py` | Task 1: CP design table and interference figure | `Task-1/results/` | ~2 s |
+| `python3 Task-1/cp_design.py` | Task 1: CP design, candidate CP lengths (SINR, overhead), Monte Carlo check | `Task-1/results/` | ~12 s |
 | `python3 Task-2/transmitter.py` | Task 2: check of every transmitter block | `Task-2/results/` | <1 s |
 | `python3 Task-3/channel.py` | Task 3: channel realizations and checks | `Task-3/results/` | ~2 s |
 | `python3 Task-4/receiver.py` | Task 4: noise-free loopback check | `Task-4/results/` | <1 s |
@@ -115,7 +116,7 @@ Each run of `main.py` writes six figures (`channel_taps`, `frequency_response`,
 ├── plot_style.py                common figure style
 ├── run_all.sh                   runs all tasks
 ├── Task-1/
-│   └── cp_design.py             Task 1: CP length, ISI + ICI power of a short CP
+│   └── cp_design.py             Task 1: CP length, ISI + ICI power and SINR of a short CP
 ├── Task-2/
 │   └── transmitter.py           Task 2: data, grid mapping, IDFT, CP, concatenation
 ├── Task-3/

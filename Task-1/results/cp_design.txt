@@ -1,4 +1,5 @@
 Task 1: CP design (N = 512, W = 15.36 MHz, sample period 65.1 ns)
+The same Ncp is used for all 14 OFDM symbols of a slot.
 
 Scenario 1
   sum of tap powers               : 1.000
@@ -8,6 +9,7 @@ Scenario 1
   chosen CP length Ncp = L - 1    : 4 samples = 0.260 us
   OFDM symbol length N + Ncp      : 516 samples = 33.59 us
   CP overhead Ncp / (N + Ncp)     : 0.78 %
+  CP energy loss (N + Ncp) / N    : 0.03 dB
   slot length 14 (N + Ncp)        : 7224 samples = 470.3 us
   shortest Ncp with ISI+ICI 10 dB below noise : 4 samples
   ISI+ICI with NR normal CP (36 samples): 0 (no ISI)
@@ -20,7 +22,48 @@ Scenario 2
   chosen CP length Ncp = L - 1    : 75 samples = 4.883 us
   OFDM symbol length N + Ncp      : 587 samples = 38.22 us
   CP overhead Ncp / (N + Ncp)     : 12.78 %
+  CP energy loss (N + Ncp) / N    : 0.59 dB
   slot length 14 (N + Ncp)        : 8218 samples = 535.0 us
   shortest Ncp with ISI+ICI 10 dB below noise : 69 samples
   ISI+ICI with NR normal CP (36 samples): -28.9 dB
+
+Candidate CP lengths (average over the channel, SNR = 30 dB)
+   Ncp   us      overhead   energy loss   ISI+ICI     SINR      SINR loss
+Scenario 1
+     0   0.000     0.00 %     0.00 dB      -25.3 dB    24.0 dB     6.0 dB
+     2   0.130     0.39 %     0.02 dB      -33.7 dB    28.5 dB     1.5 dB
+     3   0.195     0.58 %     0.03 dB      -36.8 dB    29.2 dB     0.8 dB
+     4   0.260     0.78 %     0.03 dB         0        30.0 dB     0.0 dB
+Scenario 2
+     4   0.260     0.78 %     0.03 dB      -16.6 dB    16.4 dB    13.6 dB
+    36   2.344     6.57 %     0.30 dB      -28.9 dB    26.4 dB     3.6 dB
+    55   3.581     9.70 %     0.44 dB      -35.1 dB    28.8 dB     1.2 dB
+    69   4.492    11.88 %     0.55 dB      -40.3 dB    29.6 dB     0.4 dB
+    75   4.883    12.78 %     0.59 dB         0        30.0 dB     0.0 dB
+
+Monte Carlo check: 1000 random channel realizations (seed 2030), no noise, OFDM symbols 1-13
+   Ncp   ISI+ICI formula   simulated   difference   SINR formula   simulated
+Scenario 1
+     0   2.965e-03       2.946e-03     -0.6 %     24.02 dB     23.98 dB
+     1   1.164e-03       1.172e-03     +0.7 %     26.65 dB     26.58 dB
+     2   4.219e-04       4.293e-04     +1.7 %     28.47 dB     28.39 dB
+     3   2.109e-04       2.108e-04     -0.1 %     29.17 dB     29.11 dB
+     4   0               1.1e-31       exact      30.00 dB     29.94 dB
+     8   0               1.1e-31       exact      30.00 dB     29.94 dB
+Scenario 2
+     0   3.163e-02       3.127e-02     -1.1 %     14.86 dB     14.93 dB
+     4   2.205e-02       2.164e-02     -1.9 %     16.37 dB     16.47 dB
+    10   1.363e-02       1.330e-02     -2.4 %     18.35 dB     18.46 dB
+    20   6.133e-03       5.991e-03     -2.3 %     21.47 dB     21.57 dB
+    30   2.930e-03       2.882e-03     -1.6 %     24.06 dB     24.12 dB
+    36   1.277e-03       1.283e-03     +0.4 %     26.43 dB     26.43 dB
+    45   8.203e-04       8.203e-04     +0.0 %     27.40 dB     27.41 dB
+    55   3.125e-04       3.050e-04     -2.4 %     28.82 dB     28.86 dB
+    60   2.344e-04       2.303e-04     -1.8 %     29.09 dB     29.11 dB
+    65   1.563e-04       1.529e-04     -2.1 %     29.37 dB     29.40 dB
+    69   9.375e-05       9.130e-05     -2.6 %     29.61 dB     29.63 dB
+    72   4.688e-05       4.587e-05     -2.1 %     29.80 dB     29.82 dB
+    74   1.563e-05       1.564e-05     +0.1 %     29.93 dB     29.95 dB
+    75   0               1.2e-31       exact      30.00 dB     30.01 dB
+    80   0               1.2e-31       exact      30.00 dB     30.01 dB
 

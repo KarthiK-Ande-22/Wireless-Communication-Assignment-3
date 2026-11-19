@@ -45,3 +45,4 @@ SHORT_CP_LENGTH = 4
 DATA_SEED = 2026                     # 4-QAM data symbols
 CHANNEL_SEEDS = {1: 2027, 2: 2028}   # channel taps h of Scenario 1 and 2
 NOISE_SEED = 2029                    # receiver noise w
+CP_CHECK_SEED = 2030                 # Task 1: Monte Carlo check over many channels

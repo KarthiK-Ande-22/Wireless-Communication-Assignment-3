@@ -104,7 +104,7 @@ OFDM or 5G function is used.
     \toprule
     File & What it does \\
     \midrule
-    \texttt{Task-1/cp\_design.py}  & Task 1: CP length, rms delay spread, and the ISI + ICI power of a too short CP (Sec.~\ref{sec:task1}, App.~\ref{app:interference}). \\
+    \texttt{Task-1/cp\_design.py}  & Task 1: CP length, rms delay spread, ISI + ICI power and SINR of shorter CPs, and a Monte Carlo check with the link of Tasks 2--4 (Sec.~\ref{sec:task1}, App.~\ref{app:interference}). \\
     \texttt{Task-2/transmitter.py} & Task 2: \texttt{generate\_data}, \texttt{map\_to\_resource\_grid}, \texttt{ofdm\_modulate}, \texttt{add\_cyclic\_prefix} and \texttt{concatenate\_symbols}. \\
     \texttt{Task-3/channel.py}     & Task 3: \texttt{channel\_taps}, \texttt{frequency\_response}, \texttt{multipath\_channel}. \\
     \texttt{Task-4/receiver.py}    & Task 4: \texttt{split\_into\_blocks}, \texttt{remove\_cyclic\_prefix}, \texttt{ofdm\_demodulate}, \texttt{equalize}, \texttt{demap\_resource\_grid}; and \texttt{detect\_symbols} (Assignment 2 detector, only to count errors). \\
@@ -197,7 +197,9 @@ The condition is
 
 \subsection{Design}
 
-I choose the shortest CP that meets \eqref{eq:condition}, $\Ncp = L - 1$ (Table~\ref{tab:cp}).
+I choose the shortest CP that meets \eqref{eq:condition}, $\Ncp = L - 1$ (Table~\ref{tab:cp}). As the
+task requires, the same $\Ncp$ is used for all 14 OFDM symbols of the slot. (NR makes the first symbol of
+every 0.5 ms slightly longer; this is not modelled here.)
 
 \begin{table}[!htb]
   \centering
@@ -222,42 +224,82 @@ I choose the shortest CP that meets \eqref{eq:condition}, $\Ncp = L - 1$ (Table~
   \end{tabular}
 \end{table}
 
+\subsection{Justification}
+
 \textbf{Why not shorter.} A tap beyond the CP causes ISI and ICI. Appendix~\ref{app:interference}
-shows that their average power per subcarrier is
+shows that, averaged over the channel, their power per subcarrier and the resulting SINR are
 \begin{equation}
-  P_{\mathrm{int}} = \frac{2}{N} \sum_{\ell} \sigma_\ell^2 \max(\ell - \Ncp, 0).
+  P_{\mathrm{int}} = \frac{2}{N} \sum_{\ell} \sigma_\ell^2 \max(\ell - \Ncp, 0), \qquad
+  \mathrm{SINR} = \frac{\sum_\ell \sigma_\ell^2}{P_{\mathrm{int}} + 1/\SNR} = \frac{1}{P_{\mathrm{int}} + 10^{-3}}.
   \label{eq:pint}
 \end{equation}
-Fig.~\ref{fig:interference} plots it against $\Ncp$.
+Each tap counts with its \emph{excess delay} $\ell - \Ncp$: the number of samples by which it reaches
+into the previous OFDM symbol. So a weak but late tap can still matter. Table~\ref{tab:candidates}
+and Fig.~\ref{fig:interference} compare candidate CP lengths.
+
+\begin{table}[!htb]
+  \centering
+  \caption{Candidate CP lengths, average over the channel (\texttt{Task-1/results/cp\_design.txt}).
+    Energy loss: $10\log_{10}((N + \Ncp)/N)$, the energy spent on the CP, which the receiver throws away.
+    SINR from \eqref{eq:pint}; without ISI it equals the SNR, 30 dB.}
+  \label{tab:candidates}
+  \small
+  \begin{tabular}{lcccccc}
+    \toprule
+    $\Ncp$ (samples) & $\Ncp/W$ ($\mu$s) & Overhead & Energy loss & ISI + ICI & SINR & SINR loss \\
+    \midrule
+    \multicolumn{7}{l}{\textit{Scenario 1} ($L - 1 = 4$)} \\
+    2                      & 0.130 & 0.39\%  & 0.02 dB & $-33.7$ dB & 28.5 dB & 1.5 dB \\
+    3                      & 0.195 & 0.58\%  & 0.03 dB & $-36.8$ dB & 29.2 dB & 0.8 dB \\
+    \textbf{4 (chosen)}    & \textbf{0.260} & \textbf{0.78\%} & 0.03 dB & 0 & \textbf{30.0 dB} & 0 \\
+    \midrule
+    \multicolumn{7}{l}{\textit{Scenario 2} ($L - 1 = 75$)} \\
+    4 (Task 5d)            & 0.260 & 0.78\%  & 0.03 dB & $-16.6$ dB & 16.4 dB & 13.6 dB \\
+    36 (NR normal CP)      & 2.344 & 6.57\%  & 0.30 dB & $-28.9$ dB & 26.4 dB & 3.6 dB \\
+    55 (all but last tap)  & 3.581 & 9.70\%  & 0.44 dB & $-35.1$ dB & 28.8 dB & 1.2 dB \\
+    69                     & 4.492 & 11.88\% & 0.55 dB & $-40.3$ dB & 29.6 dB & 0.4 dB \\
+    \textbf{75 (chosen)}   & \textbf{4.883} & \textbf{12.78\%} & 0.59 dB & 0 & \textbf{30.0 dB} & 0 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \begin{itemize}
-  \item Each tap counts with its \emph{excess delay} $\ell - \Ncp$, so weak but late taps still matter.
-        In Scenario 2 the two last taps carry only 0.9\% and 0.4\% of the power, but every tap
-        ($\sigma_\ell^2 \ge 0.004$) is stronger than the noise ($1/\SNR = 0.001$).
-  \item Even a softer rule, ``interference at least 10 dB below the noise'', needs $\Ncp \ge 4$ in
-        Scenario 1 and $\Ncp \ge 69$ in Scenario 2. Going from 69 to 75 costs only 6 samples
-        (11.9\% instead of 12.8\% overhead) and removes the interference completely, so I keep
-        $\Ncp = L - 1$.
+  \item \textbf{Scenario 1.} One sample less ($\Ncp = 3$) already costs 0.8 dB of SINR, while the
+        whole CP of 4 samples costs only 0.03 dB of energy.
+  \item \textbf{Scenario 2.} The two last taps carry only 0.9\% and 0.4\% of the power, but cutting the
+        CP still hurts. Ignoring only the last tap ($\Ncp = 55$) loses 1.2 dB, and the NR normal CP of
+        36 samples loses 3.6 dB. Going from 36 to 75 samples costs only 0.3 dB of energy (0.59 dB
+        instead of 0.30 dB) but gains 3.6 dB of SINR. Even the last 6 samples (69 to 75) gain 0.4 dB for 0.04 dB.
+  \item \textbf{Error floor.} The ISI + ICI power grows with the signal power, so more transmit power
+        cannot remove it. It is an error floor; only a longer CP removes it.
 \end{itemize}
+So every CP sample up to $L - 1$ pays for itself, and $\Ncp = L - 1$ gives the full SNR of 30 dB.
 
 \textbf{Why not longer.} In this model (perfect timing, exact channel) a CP longer than $L-1$ brings
-nothing. It only costs time and energy: the CP takes $\Ncp/(N + \Ncp)$ of the slot and of the
-transmitted energy, and the receiver throws it away. This is 0.78\% (0.03 dB) in Scenario 1 and
-12.78\% (0.59 dB) in Scenario 2. A real system would add a few samples of margin for timing errors
-and filter tails.
+nothing: the SINR is already 30 dB (Fig.~\ref{fig:interference}, bottom). It only costs time and energy:
+0.78\% (0.03 dB) in Scenario 1 and 12.78\% (0.59 dB) in Scenario 2. A real system would add a few
+samples of margin for timing errors and filter tails.
 
 \textbf{Comparison with 5G NR.} With 30 kHz spacing, NR uses a normal CP of 2.34 $\mu$s, which is
 36 samples at this sampling rate (6.6\% overhead). Scenario 1 (0.26 $\mu$s) fits easily. Scenario 2
-needs about twice as much: with a 36-sample CP its taps at 55 and 75 would leave an average
-interference of $-28.9$ dB, as large as the noise (Fig.~\ref{fig:interference}).
+needs about twice as much: with the NR CP its taps at 55 and 75 would leave an average interference of
+$-28.9$ dB, as large as the noise, and the SINR would drop to 26.4 dB.
+
+\textbf{Check by simulation.} \texttt{cp\_design.py} also sends slots through the transmitter, channel
+and receiver of Tasks 2--4 without noise, for 1000 random channel realizations (seed 2030) and 6
+(Scenario 1) and 15 (Scenario 2) CP lengths. The measured ISI + ICI power agrees with \eqref{eq:pint}
+within 2.6\% at every simulated $\Ncp$, and the SINR within 0.1 dB; at $\Ncp \ge L - 1$ the measured
+power is $10^{-31}$, i.e.\ zero up to rounding errors (markers in Fig.~\ref{fig:interference}).
 
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=0.85\textwidth]{interference_vs_cp.pdf}
-  \caption{Task 1, both scenarios: average ISI + ICI power per subcarrier \eqref{eq:pint} against
-    the CP length (average over the channel). Dash-dot: noise power $1/\SNR$. Dashed: the chosen
-    $\Ncp = L - 1$ (4 and 75), from where the interference is exactly zero. Dotted: the 5G NR normal
-    CP of 36 samples. \textbf{Every sample of CP below $L-1$ adds interference; in Scenario 2 it stays
-    above the noise up to $\Ncp = 41$.}}
+  \caption{Task 1, both scenarios: average ISI + ICI power per subcarrier (top) and average SINR (bottom)
+    against the CP length. Lines: formula \eqref{eq:pint}; markers: simulation of the link over 1000 random
+    channel realizations. Dash-dot: noise power $1/\SNR$ (top) and SNR = 30 dB (bottom). Dashed: the chosen
+    $\Ncp = L - 1$ (4 and 75), from where the interference is exactly zero. Dotted: the 5G NR normal CP of
+    36 samples. \textbf{Every CP sample below $L-1$ costs SINR; at $\Ncp = L - 1$ the SINR reaches 30 dB,
+    and a longer CP brings nothing.}}
   \label{fig:interference}
 \end{figure}
 
