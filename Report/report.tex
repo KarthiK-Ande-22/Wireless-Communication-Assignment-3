@@ -631,20 +631,21 @@ $\Ncp = 4$ (right or bottom), on the same axes.
   \label{fig:short-error}
 \end{figure}
 
-\textbf{What goes wrong.} The taps at $\ell = 5, 10, 20, 35, 55, 75$ are longer than the CP. By
-\eqref{eq:window}, for the first $\ell - 4$ samples of every DFT window they read the previous OFDM
-symbol. This has two effects:
+\textbf{Comparison with plot (c) for Scenario 2} (Figs.~\ref{fig:short-rx}--\ref{fig:short-error},
+Table~\ref{tab:short}).
 \begin{itemize}
-  \item \textbf{ISI:} part of symbol $i - 1$ enters the DFT window of symbol $i$.
-  \item \textbf{ICI:} the window no longer holds a circular convolution of $d_i$, so \eqref{eq:flat} no
-        longer holds. The subcarriers are not orthogonal any more, and every $\yt_i[k]$ also gets parts of
-        the other subcarriers.
+  \item \textbf{Before the equalizer} (Fig.~\ref{fig:short-rx}), the two plots look almost the same.
+        The extra disturbance ($-18.9$ dB) is small next to the spread that the channel itself causes,
+        since $|H[k]|$ goes from 0.05 to 2.03.
+  \item \textbf{After the equalizer} (Fig.~\ref{fig:short-eq}), the difference is clear. With $\Ncp = 75$
+        only the faded subcarriers were spread. With $\Ncp = 4$ every cluster is wide, also on the strong
+        subcarriers (green and yellow points): there the mean error is 12.7 times (11.0 dB) larger.
+  \item \textbf{Error on every subcarrier} (Fig.~\ref{fig:short-error}). With $\Ncp = 75$ the error
+        follows the noise-only line $1/(\SNR\,|H[k]|^2)$. With $\Ncp = 4$ it is 7.9 to 15.0 dB higher on
+        every subcarrier, not only on the faded ones.
+  \item \textbf{Symbol errors} rise from 1 to 39. They are on 10 subcarriers, all in or next to the
+        deepest fades ($-11.8$ to $-26.0$ dB), where the SINR is lowest.
 \end{itemize}
-Both add an error to \eqref{eq:flat}, $\yt_i[k] = H[k]\dt_i[k] + \tilde{e}_i[k] + \wt_i[k]$, whose power
-$D[k]$ is derived in Appendix~\ref{app:interference}. Each tap counts with its excess delay $\ell - \Ncp$:
-tap 55 has only 3\% of the channel energy, but it reaches 51 samples into the previous symbol and causes
-52\% of the interference. The interference grows with the signal power, so more transmit power cannot
-remove it.
 
 \begin{table}[!htb]
   \centering
@@ -667,21 +668,26 @@ remove it.
   \end{tabular}
 \end{table}
 
-\textbf{Comparison with plot (c) for Scenario 2} (Table~\ref{tab:short}).
+\textbf{Why: ISI and ICI.} The taps at $\ell = 5, 10, 20, 35, 55, 75$ are longer than the CP. By
+\eqref{eq:window}, for the first $\ell - 4$ samples of every DFT window they read the previous OFDM
+symbol. This has two effects:
 \begin{itemize}
-  \item \textbf{Before the equalizer} (Fig.~\ref{fig:short-rx}), the two plots look almost the same. The extra disturbance ($-18.9$ dB) is small next to $|\yt| \approx 1$, and the
-        cloud is already spread by the channel.
-  \item \textbf{After the equalizer} (Fig.~\ref{fig:short-eq}), the difference is clear. With $\Ncp = 75$ only the faded subcarriers were spread. With $\Ncp = 4$
-        every cluster is wide, also on the strong subcarriers (green and yellow points): there the mean
-        error is 12.7 times (11.0 dB) larger.
-  \item \textbf{Why.} The error after the equalizer is now $(1/\SNR + D[k])/|H[k]|^2$, and the ISI + ICI
-        power $D[k]$ is about 13 times the noise. So the spread is no longer set by the noise alone.
-        Fig.~\ref{fig:short-error} shows this: in (b) the error follows the new dashed line, 7.9 to 15.0 dB
-        above (a). The mean SINR drops from 30.4 dB to 18.8 dB, and even the best
-        subcarrier is limited to 25.7 dB.
-  \item \textbf{Symbol errors.} They rise from 1 to 39. They are on 10 subcarriers, all in or next to the
-        deepest fades ($-11.8$ to $-26.0$ dB), where the SINR is lowest.
+  \item \textbf{ISI:} part of symbol $i - 1$ enters the DFT window of symbol $i$.
+  \item \textbf{ICI:} the window no longer holds a circular convolution of $d_i$, so \eqref{eq:flat} no
+        longer holds. The subcarriers are not orthogonal any more, and every $\yt_i[k]$ also gets parts of
+        the other subcarriers.
 \end{itemize}
+Both add an error to \eqref{eq:flat}, $\yt_i[k] = H[k]\dt_i[k] + \tilde{e}_i[k] + \wt_i[k]$, whose power
+$D[k]$ is derived in Appendix~\ref{app:interference}. After the equalizer the error on subcarrier $k$ is
+therefore $(1/\SNR + D[k])/|H[k]|^2$ instead of $1/(\SNR\,|H[k]|^2)$ (dashed lines in
+Fig.~\ref{fig:short-error}). On average $D[k]$ is $1.34 \cdot 10^{-2}$, about 13 times the noise, so the
+spread is now set by the ISI and ICI, not by the noise. This is why every cluster widens: the mean SINR
+drops from 30.4 dB to 18.8 dB, and even the best subcarrier is limited to 25.7 dB.
+
+Each tap counts with its excess delay $\ell - \Ncp$: tap 55 has only 3\% of the channel energy, but it
+reaches 51 samples into the previous symbol and causes 52\% of the interference. The ISI and ICI grow
+with the signal power, so more transmit power cannot remove them; only a CP of at least $L - 1 = 75$
+samples does (Task 1).
 
 \FloatBarrier
 % =====================================================================
