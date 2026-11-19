@@ -8,6 +8,7 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage[font=small,labelfont=bf]{caption}
+\usepackage{subcaption}
 \usepackage{enumitem}
 \usepackage{placeins}
 \usepackage[hidelinks]{hyperref}
@@ -570,33 +571,63 @@ again at $m = 512 + 63 = 575$. The average power is 0.9946 instead of exactly 1,
 % ---------------------------------------------------------------------
 
 The slot is sent over the \emph{same} Scenario 2 channel, with the same data and noise, but with
-$\Ncp = 4$. Plot (c) is repeated for the same OFDM symbol, $i = 7$.
+$\Ncp = 4$. Plot (c) is repeated for the same OFDM symbol, $i = 7$. To make the comparison easy, each
+figure below shows the result of Task 5(c) with the designed CP (left or top) next to the new result with
+$\Ncp = 4$ (right or bottom), on the same axes.
 
 \begin{figure}[!htb]
   \centering
-  \begin{minipage}[t]{0.485\textwidth}
+  \begin{subfigure}[t]{0.485\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{scenario2_cp75/received_symbols.pdf}
+    \caption{Designed CP, $\Ncp = 75$ (Task 5c).}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.485\textwidth}
     \centering
     \includegraphics[width=\linewidth]{scenario2_cp4/received_symbols.pdf}
-    \caption{Scenario 2 with a too short CP ($\Ncp = 4$), Task 5(d): received values $\yt_7[k]$.
-      \textbf{Almost the same as Fig.~\ref{fig:s2-rx}.}}
-    \label{fig:short-rx}
-  \end{minipage}\hfill
-  \begin{minipage}[t]{0.485\textwidth}
-    \centering
-    \includegraphics[width=\linewidth]{scenario2_cp4/equalized_symbols.pdf}
-    \caption{Scenario 2 with a too short CP ($\Ncp = 4$), Task 5(d): equalized values $\deq_7[k]$.
-      \textbf{Wide clusters, also on strong subcarriers.}}
-    \label{fig:short-eq}
-  \end{minipage}
+    \caption{Too short CP, $\Ncp = 4$ (Task 5d).}
+  \end{subfigure}
+  \caption{Scenario 2, Task 5(d): received values $\yt_7[k]$ before the equalizer, with the designed CP
+    and with $\Ncp = 4$. \textbf{The two plots look almost the same.}}
+  \label{fig:short-rx}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=\textwidth]{scenario2_cp4/equalization_error.pdf}
-  \caption{Scenario 2 with a too short CP ($\Ncp = 4$), extra figure for Task 5(d): error power after
-    the equalizer on every subcarrier. Dashed: $(1/\SNR + D[k])/|H[k]|^2$, with the ISI + ICI power
-    $D[k]$ of Appendix~\ref{app:interference}. Same axes as Fig.~\ref{fig:s2-error}.
-    \textbf{The error is 7.9 to 15.0 dB higher than with $\Ncp = 75$ on every subcarrier.}}
+  \begin{subfigure}[t]{0.485\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{scenario2_cp75/equalized_symbols.pdf}
+    \caption{Designed CP, $\Ncp = 75$ (Task 5c).}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.485\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{scenario2_cp4/equalized_symbols.pdf}
+    \caption{Too short CP, $\Ncp = 4$ (Task 5d).}
+  \end{subfigure}
+  \caption{Scenario 2, Task 5(d): equalized values $\deq_7[k]$ and the 4-QAM points (red), with the
+    designed CP and with $\Ncp = 4$. \textbf{With $\Ncp = 4$ the clusters are wide, also on the strong
+    subcarriers.}}
+  \label{fig:short-eq}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=0.9\linewidth]{scenario2_cp75/equalization_error.pdf}
+    \caption{Designed CP, $\Ncp = 75$ (Task 5c): $D[k] = 0$.}
+  \end{subfigure}
+
+  \vspace{4pt}
+  \begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=0.9\linewidth]{scenario2_cp4/equalization_error.pdf}
+    \caption{Too short CP, $\Ncp = 4$ (Task 5d).}
+  \end{subfigure}
+  \caption{Scenario 2, extra figure for Task 5(d): error power after the equalizer on every subcarrier,
+    on the same axes. Dashed: the expected $(1/\SNR + D[k])/|H[k]|^2$, with the ISI + ICI power $D[k]$ of
+    Appendix~\ref{app:interference}. \textbf{With $\Ncp = 4$ the error is 7.9 to 15.0 dB higher on every
+    subcarrier.}}
   \label{fig:short-error}
 \end{figure}
 
@@ -638,17 +669,15 @@ remove it.
 
 \textbf{Comparison with plot (c) for Scenario 2} (Table~\ref{tab:short}).
 \begin{itemize}
-  \item \textbf{Before the equalizer} (Fig.~\ref{fig:short-rx} against Fig.~\ref{fig:s2-rx}), the two plots
-        look almost the same. The extra disturbance ($-18.9$ dB) is small next to $|\yt| \approx 1$, and the
+  \item \textbf{Before the equalizer} (Fig.~\ref{fig:short-rx}), the two plots look almost the same. The extra disturbance ($-18.9$ dB) is small next to $|\yt| \approx 1$, and the
         cloud is already spread by the channel.
-  \item \textbf{After the equalizer} (Fig.~\ref{fig:short-eq} against Fig.~\ref{fig:s2-eq}), the
-        difference is clear. With $\Ncp = 75$ only the faded subcarriers were spread. With $\Ncp = 4$
+  \item \textbf{After the equalizer} (Fig.~\ref{fig:short-eq}), the difference is clear. With $\Ncp = 75$ only the faded subcarriers were spread. With $\Ncp = 4$
         every cluster is wide, also on the strong subcarriers (green and yellow points): there the mean
         error is 12.7 times (11.0 dB) larger.
   \item \textbf{Why.} The error after the equalizer is now $(1/\SNR + D[k])/|H[k]|^2$, and the ISI + ICI
         power $D[k]$ is about 13 times the noise. So the spread is no longer set by the noise alone.
-        Fig.~\ref{fig:short-error} shows that the error follows the new dashed line, 7.9 to 15.0 dB above
-        Fig.~\ref{fig:s2-error}. The mean SINR drops from 30.4 dB to 18.8 dB, and even the best
+        Fig.~\ref{fig:short-error} shows this: in (b) the error follows the new dashed line, 7.9 to 15.0 dB
+        above (a). The mean SINR drops from 30.4 dB to 18.8 dB, and even the best
         subcarrier is limited to 25.7 dB.
   \item \textbf{Symbol errors.} They rise from 1 to 39. They are on 10 subcarriers, all in or next to the
         deepest fades ($-11.8$ to $-26.0$ dB), where the SINR is lowest.

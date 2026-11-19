@@ -142,7 +142,7 @@ def plot_received_symbols(received, response, title, folder, color_range):
     points = scatter_colored_by_channel(ax, received, response, color_range)
     fig.colorbar(points, ax=ax, label="$|H[k]|^2$ (dB)", shrink=0.9)
 
-    limit = 1.1 * np.max(np.abs(np.concatenate([received.real, received.imag])))
+    limit = 1.1 * np.max(np.abs(response))      # set by the channel, so runs on one channel share axes
     ax.set_xlim(-limit, limit)
     ax.set_ylim(-limit, limit)
     ax.set_aspect("equal")
