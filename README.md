@@ -82,7 +82,7 @@ Each run of `main.py` writes seven figures, as `.pdf` (used in the report) and
 |---|---|
 | `channel_taps` | (a) \|h[l]\| against the tap index |
 | `frequency_response` | (a) \|H[k]\|² in dB against the subcarrier index |
-| `transmitted_signal` | (b) \|x[m]\| of the whole slot, and a zoom on OFDM symbol 0 that shows the CP is a copy of its last Ncp samples |
+| `transmitted_signal` | (b) \|x[m]\| against the sample index for the whole slot (top), and a zoom on OFDM symbol 0 that shows the CP is a copy of its last Ncp samples (bottom) |
 | `amplitude_histogram` | (b) histogram of the amplitudes \|x[m]\| with the Rayleigh density, mean amplitude and PAPR |
 | `received_symbols` | (c) received values ỹ₇[k], before the equalizer |
 | `equalized_symbols` | (c) equalized values and the 4-QAM points |
@@ -114,7 +114,9 @@ All numbers below are read from the `results/` folders.
 ### Task 1: CP length
 
 Ncp = L - 1, the delay of the last channel tap: the shortest CP with no ISI
-and no ICI. The same Ncp is used for all 14 OFDM symbols of a slot.
+and no ICI. The same Ncp is used for all 14 OFDM symbols of a slot. The CP must
+cover the maximum delay, not the rms delay spread: in Scenario 2 it is 6.5 times
+τ_rms, where τ_rms² = Σ σ²ₗ l² − (Σ σ²ₗ l)².
 
 | | Scenario 1 | Scenario 2 |
 |---|---|---|
@@ -220,15 +222,27 @@ interference (measured: 0.51).
 | Symbol errors in the slot of 7168 | 0 | 1 (k = 450, deepest fade) | 39 |
 
 - **(a)** Scenario 1 is a smooth channel; Scenario 2 changes fast and has deep fades.
-- **(b)** |x[m]| looks like noise, and its amplitudes follow the Rayleigh density;
-  the zoom shows that the CP is a copy of the last Ncp samples of each OFDM symbol.
+- **(b)** |x[m]| looks like noise, and its amplitudes follow the Rayleigh density.
+  The PAPR is about 9.6 dB, so the power amplifier must stay linear over the peaks.
+  The zoom shows that the CP is a copy of the last Ncp samples of each OFDM symbol.
 - **(c)** Before the equalizer the points are rotated and scaled by H[k]. After it,
   the error on subcarrier k has variance 1/(SNR |H[k]|²): tight clusters on strong
-  subcarriers, wide spread on faded ones.
-- **(d)** With Ncp = 4 the taps 5 to 75 reach into the previous OFDM symbol (ISI
-  and ICI). The interference is 13 times the noise, so every cluster widens, the
-  mean SINR drops from 30.4 dB to 18.8 dB, and the symbol errors rise from 1 to 39.
-  Tap 55 has only 3 % of the channel energy but causes 52 % of the interference.
+  subcarriers, wide spread on faded ones. Scenario 2's one error is on its deepest
+  fade; real systems protect such subcarriers with channel coding.
+- **(d)** With Ncp = 4 (much shorter than L − 1 = 75) the taps 5 to 75 reach into
+  the previous OFDM symbol, which causes ISI and ICI.
+  - Before the equalizer the plot looks almost the same: the interference is only
+    1.2 % of the received signal power.
+  - After the equalizer every cluster is wide, also on strong subcarriers. The
+    interference D[k] is 13 times the noise on average (−22.8 to −15.2 dB over
+    the subcarriers; a noise-free simulation of 200 slots agrees within about 2 %).
+  - The mean SINR drops from 30.4 dB to 18.8 dB; even the best subcarrier only
+    reaches 25.7 dB (36.2 dB with Ncp = 75).
+  - The symbol errors rise from 1 to 39, on 10 subcarriers in or next to the deepest
+    fades, where the SINR is −10.3 to 4.1 dB. A Gaussian-noise estimate gives about 51.
+  - Tap 55 has only 3 % of the channel energy but causes 52 % of the interference;
+    tap 10 is next with 25 %.
+  - More transmit power cannot remove it; only a CP of at least 75 samples can.
 
 **Scenario 1, Ncp = 4**
 
