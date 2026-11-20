@@ -46,7 +46,7 @@ No built-in OFDM or 5G function is used.
 
 Run every command from the project root.
 
-**Everything at once** (about 25 s), then the report:
+**Everything at once**, then the report:
 
 ```bash
 bash run_all.sh
