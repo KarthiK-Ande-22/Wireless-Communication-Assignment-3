@@ -109,7 +109,7 @@ Re-running the scripts reproduces every figure and number exactly.
 
 ## Results
 
-All numbers below are read from the `results/` folders.
+All numbers below are read from the `results/` folder.
 
 ### Task 1: CP length
 
@@ -345,7 +345,7 @@ y -> split_into_blocks -> remove_cyclic_prefix -> ofdm_demodulate (F) -> equaliz
   detector of Assignment 2). This decision is not part of Fig. 3; it only helps
   to compare the runs.
 - Running a file of Tasks 2-4 on its own checks its blocks and writes the
-  result to its `results/` folder.
+  result to `results/Task-N/`.
 
 ## Report
 
