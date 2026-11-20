@@ -372,9 +372,8 @@ expected value \eqref{eq:eqnoise}.
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=0.92\textwidth]{scenario1_cp4/transmitted_signal.pdf}
-  \caption{Scenario 1 ($\Ncp = 4$), Task 5(b). Top: $|x[m]|$ for the $M = 7224$ samples of one slot;
-    dotted lines mark the start of each OFDM symbol, and the 4-sample CPs are too thin to see. Bottom:
-    zoom on OFDM symbol 0; the CP (orange) is a copy of its last 4 samples (green).
+  \caption{Scenario 1 ($\Ncp = 4$), Task 5(b). Top: $|x[m]|$ for the $M = 7224$ samples of one slot.
+    Bottom: zoom on OFDM symbol 0; the CP (orange) is a copy of its last 4 samples (green).
     \textbf{A noise-like signal; the CP repeats the end of each symbol.}}
   \label{fig:s1-x}
 \end{figure}
@@ -481,8 +480,7 @@ expected value \eqref{eq:eqnoise}.
   \centering
   \includegraphics[width=0.92\textwidth]{scenario2_cp75/transmitted_signal.pdf}
   \caption{Scenario 2 ($\Ncp = 75$), Task 5(b), as in Fig.~\ref{fig:s1-x}. Top: $|x[m]|$ for the
-    $M = 8218$ samples of one slot, with the 75-sample CP of each OFDM symbol in orange. Bottom: zoom on
-    OFDM symbol 0; the samples $m = 0$--74 (CP) repeat the samples $m = 512$--586.
+    $M = 8218$ samples of one slot. Bottom: zoom on OFDM symbol 0; the samples $m = 0$--74 (CP) repeat the samples $m = 512$--586.
     \textbf{The same noise-like signal; 12.8\% of the samples are CP.}}
   \label{fig:s2-x}
 \end{figure}
@@ -509,8 +507,8 @@ expected value \eqref{eq:eqnoise}.
 
 \textbf{(b) Transmitted signal} (Figs.~\ref{fig:s2-x} and \ref{fig:s2-hist}). The signal looks the same
 as in Scenario 1: its amplitudes follow the Rayleigh density (mean $|x[m]| = 0.883$), and the PAPR is
-9.57 dB. But now the 14 CPs of 75 samples are clearly visible. In the
-zoom, the CP repeats the end of the symbol sample by sample; for example, the peak at $m = 63$ appears
+9.57 dB. The slot is longer (8218 samples instead of 7224), because each symbol now has a
+75-sample CP. In the zoom, the CP repeats the end of the symbol sample by sample; for example, the peak at $m = 63$ appears
 again at $m = 512 + 63 = 575$. The average power is 0.9946 instead of exactly 1, because the CP repeats
 75 random samples of each symbol.
 

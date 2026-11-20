@@ -64,14 +64,9 @@ def plot_frequency_response(response, title, folder):
 
 # (b) Transmitted signal
 
-def plot_whole_slot(ax, x, block_length, cp_length, title):
-    """|x[m]| of the whole slot, with every CP shaded."""
+def plot_whole_slot(ax, x, title):
+    """|x[m]| of the whole slot against the sample index m."""
     amplitude = np.abs(x)
-    for i in range(len(x) // block_length):
-        start = i * block_length
-        ax.axvspan(start, start + cp_length, color=ORANGE, alpha=0.35, linewidth=0,
-                   label="cyclic prefix" if i == 0 else None)
-        ax.axvline(start, color=GREY, linewidth=0.5, linestyle=":")
     ax.plot(np.arange(len(x)), amplitude, color=BLUE, linewidth=0.35, label="$|x[m]|$")
     ax.axhline(1, color=INK, linestyle="--", linewidth=1.0, label="rms value 1 ($E|x[m]|^2 = 1$)")
     ax.set_xlim(0, len(x))
@@ -79,7 +74,7 @@ def plot_whole_slot(ax, x, block_length, cp_length, title):
     ax.set_xlabel("sample index $m$")
     ax.set_ylabel("$|x[m]|$")
     ax.set_title(title)
-    ax.legend(loc="upper right", ncol=3, framealpha=0.95)
+    ax.legend(loc="upper right", ncol=2, framealpha=0.95)
 
 
 def plot_cp_zoom(ax_start, ax_end, x, num_subcarriers, cp_length):
@@ -111,7 +106,7 @@ def plot_transmitted_signal(x, num_subcarriers, cp_length, title, folder):
     top, bottom = fig.subfigures(2, 1, height_ratios=[1, 0.9], hspace=0.04)
     ax = top.subplots()
     ax_start, ax_end = bottom.subplots(1, 2, sharey=True, gridspec_kw={"wspace": 0.06})
-    plot_whole_slot(ax, x, num_subcarriers + cp_length, cp_length, title)
+    plot_whole_slot(ax, x, title)
     plot_cp_zoom(ax_start, ax_end, x, num_subcarriers, cp_length)
     save_figure(fig, folder, "transmitted_signal")
 
