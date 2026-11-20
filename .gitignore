@@ -2,6 +2,9 @@
 __pycache__/
 *.pyc
 
+# Report: only the PDF is kept in the repo
+Report/report.tex
+
 # LaTeX build files
 Report/*.aux
 Report/*.log

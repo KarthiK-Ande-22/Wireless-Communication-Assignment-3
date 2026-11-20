@@ -32,7 +32,6 @@ script that makes all figures for a given scenario and CP length.
 | numpy | 2.3.4 | signals; `fft` and `ifft` (scaled to be unitary) and `convolve` |
 | scipy | 1.16.3 | only `scipy.special.erfc`, for the Q-function |
 | matplotlib | 3.10.7 | figures (the Computer Modern font ships with it) |
-| TeX Live (pdfTeX) | 2023 | only to rebuild the report: `amsmath`, `booktabs`, `caption`, `subcaption`, `enumitem`, `graphicx`, `hyperref` |
 
 Install the Python packages with:
 
@@ -46,11 +45,10 @@ No built-in OFDM or 5G function is used.
 
 Run every command from the project root.
 
-**Everything at once**, then the report:
+**Everything at once:**
 
 ```bash
 bash run_all.sh
-cd Report && pdflatex report.tex && pdflatex report.tex
 ```
 
 **The main script** makes all figures of Task 5 for one scenario and CP length:
@@ -318,13 +316,8 @@ interference (measured: 0.51).
 │   ├── Task-4/                  receiver_check.txt
 │   └── Task-5/                  scenario1_cp4/, scenario2_cp75/, scenario2_cp4/, cp_sweep/
 └── Report/
-    ├── report.tex
     └── report.pdf
 ```
-
-The report reads its figures directly from `results/Task-1/` and
-`results/Task-5/`, so after `bash run_all.sh` a new `pdflatex` run picks up
-the new figures.
 
 ## How the code works
 
