@@ -2,6 +2,7 @@
 # Reproduce every figure and number of the report.
 # Run from the project root:   bash run_all.sh
 set -e
+export PYTHONDONTWRITEBYTECODE=1           # no __pycache__ folders
 
 python3 Task-1/cp_design.py                  # Task 1: CP design
 python3 Task-2/transmitter.py                # Task 2: transmitter check

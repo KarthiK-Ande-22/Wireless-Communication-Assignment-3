@@ -33,10 +33,8 @@ plt.rcParams.update({
 
 
 def save_figure(fig, folder, name):
-    """Save the figure as <folder>/<name>.pdf (for the report) and .png."""
+    """Save the figure as <folder>/<name>.png (used by the report and the README)."""
     folder = Path(folder)
     folder.mkdir(parents=True, exist_ok=True)
-    # No creation date in the PDF, so re-running gives identical files
-    fig.savefig(folder / f"{name}.pdf", metadata={"CreationDate": None})
     fig.savefig(folder / f"{name}.png")
     plt.close(fig)
