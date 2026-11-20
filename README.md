@@ -83,7 +83,7 @@ shown below), and a `summary.txt` with every number of that run:
 | `channel_taps` | (a) \|h[l]\| against the tap index |
 | `frequency_response` | (a) \|H[k]\|² in dB against the subcarrier index |
 | `transmitted_signal` | (b) \|x[m]\| against the sample index for the whole slot (top), and a zoom on OFDM symbol 0 that shows the CP is a copy of its last Ncp samples (bottom) |
-| `amplitude_histogram` | (b) histogram of the amplitudes \|x[m]\| with the Rayleigh density, mean amplitude and PAPR |
+| `amplitude_histogram` | extra for (b): histogram of the amplitudes \|x[m]\| with the Rayleigh density, mean amplitude and PAPR |
 | `received_symbols` | (c) received values ỹ₇[k], before the equalizer |
 | `equalized_symbols` | (c) equalized values and the 4-QAM points |
 | `equalization_error` | extra: error after the equalizer on every subcarrier, with its expected value |
@@ -116,7 +116,7 @@ All numbers below are read from the `results/` folder.
 Ncp = L - 1, the delay of the last channel tap: the shortest CP with no ISI
 and no ICI. The same Ncp is used for all 14 OFDM symbols of a slot. The CP must
 cover the maximum delay, not the rms delay spread: in Scenario 2 it is 6.5 times
-τ_rms, where τ_rms² = Σ σ²ₗ l² − (Σ σ²ₗ l)².
+τ_rms, where τ_rms² = Σ σ²ₗ l² − (Σ σ²ₗ l)² (the tap powers sum to 1).
 
 | | Scenario 1 | Scenario 2 |
 |---|---|---|
@@ -139,7 +139,7 @@ A shorter CP costs SINR (average over the channel, SNR = 30 dB):
 | 2 | **75 (chosen)** | 12.78 % | 0 | **30.0 dB** | 0 |
 
 A simulation of the link over 1000 random channels agrees with the formula
-within 2.6 % (SINR within 0.1 dB).
+within 2.6 % (SINR within about 0.1 dB).
 
 <p align="center">
   <img src="results/Task-1/interference_vs_cp.png" width="70%" alt="Task 1: ISI + ICI power and SINR against the CP length">
@@ -235,7 +235,8 @@ interference (measured: 0.51).
     1.2 % of the received signal power.
   - After the equalizer every cluster is wide, also on strong subcarriers. The
     interference D[k] is 13 times the noise on average (−22.8 to −15.2 dB over
-    the subcarriers; a noise-free simulation of 200 slots agrees within about 2 %).
+    the subcarriers; a noise-free simulation of 200 slots agrees within 0.2 % on average and within
+    6 % on every subcarrier).
   - The mean SINR drops from 30.4 dB to 18.8 dB; even the best subcarrier only
     reaches 25.7 dB (36.2 dB with Ncp = 75).
   - The symbol errors rise from 1 to 39, on 10 subcarriers in or next to the deepest
@@ -342,7 +343,7 @@ y -> split_into_blocks -> remove_cyclic_prefix -> ofdm_demodulate (F) -> equaliz
   every subcarrier, so a one-tap equalizer gives back the data with noise
   variance `1 / (SNR |H[k]|^2)`.
 - The symbol errors are counted after a minimum-distance 4-QAM decision (the
-  detector of Assignment 2). This decision is not part of Fig. 3; it only helps
+  detector of Assignment 2). This decision is not part of Fig. 3 of the assignment; it only helps
   to compare the runs.
 - Running a file of Tasks 2-4 on its own checks its blocks and writes the
   result to `results/Task-N/`.
