@@ -64,16 +64,16 @@ python3 Task-5/main.py --scenario S [--cp NCP]
 
 **Each task on its own** (these are the commands in `run_all.sh`):
 
-| Command | Reproduces | Output | Time |
-|---|---|---|---:|
-| `python3 Task-1/cp_design.py` | Task 1: CP length, overhead, SINR of shorter CPs, Monte Carlo check, Fig. 1 of the report | `Task-1/results/` | ~11 s |
-| `python3 Task-2/transmitter.py` | Task 2: check of every transmitter block, for Ncp = 4 and 75 | `Task-2/results/` | <1 s |
-| `python3 Task-3/channel.py` | Task 3: the channel realization of each scenario and its checks | `Task-3/results/` | ~1 s |
-| `python3 Task-4/receiver.py` | Task 4: noise-free check of the whole link | `Task-4/results/` | <1 s |
-| `python3 Task-5/main.py --scenario 1` | Task 5 (a)-(c), Scenario 1, Ncp = 4 | `Task-5/results/scenario1_cp4/` | ~3 s |
-| `python3 Task-5/main.py --scenario 2` | Task 5 (a)-(c), Scenario 2, Ncp = 75 | `Task-5/results/scenario2_cp75/` | ~3 s |
-| `python3 Task-5/main.py --scenario 2 --cp 4` | Task 5 (d), Scenario 2, Ncp = 4 | `Task-5/results/scenario2_cp4/` | ~3 s |
-| `python3 Task-5/cp_sweep.py` | extra: the link for every Ncp from 0 to 80 | `Task-5/results/cp_sweep/` | ~2 s |
+| Command | Reproduces | Output |
+|---|---|---|
+| `python3 Task-1/cp_design.py` | Task 1: CP length, overhead, SINR of shorter CPs, Monte Carlo check, Fig. 1 of the report | `Task-1/results/` |
+| `python3 Task-2/transmitter.py` | Task 2: check of every transmitter block, for Ncp = 4 and 75 | `Task-2/results/` |
+| `python3 Task-3/channel.py` | Task 3: the channel realization of each scenario and its checks | `Task-3/results/` |
+| `python3 Task-4/receiver.py` | Task 4: noise-free check of the whole link | `Task-4/results/` |
+| `python3 Task-5/main.py --scenario 1` | Task 5 (a)-(c), Scenario 1, Ncp = 4 | `Task-5/results/scenario1_cp4/` |
+| `python3 Task-5/main.py --scenario 2` | Task 5 (a)-(c), Scenario 2, Ncp = 75 | `Task-5/results/scenario2_cp75/` |
+| `python3 Task-5/main.py --scenario 2 --cp 4` | Task 5 (d), Scenario 2, Ncp = 4 | `Task-5/results/scenario2_cp4/` |
+| `python3 Task-5/cp_sweep.py` | extra: the link for every Ncp from 0 to 80 | `Task-5/results/cp_sweep/` |
 
 Each run of `main.py` writes seven figures, as `.pdf` (used in the report) and
 `.png`, and a `summary.txt` with every number of that run:
