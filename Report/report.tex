@@ -47,8 +47,8 @@
 This assignment builds a simplified OFDM link for the downlink of a 5G NR-like system,
 from scratch in Python: transmitter, multipath channel and receiver. One slot of 14 OFDM symbols is
 sent. Each OFDM symbol has $N = 512$ subcarriers ($W = 15.36$~MHz, $\Delta f = 30$~kHz), so a slot
-carries $14 \times 512 = 7168$ 4-QAM symbols. The SNR is 30~dB. Only \texttt{fft}, \texttt{ifft} and
-\texttt{convolve} are used from NumPy; no built-in OFDM or 5G function is used, and fixed random seeds
+carries $14 \times 512 = 7168$ 4-QAM symbols. The SNR is 30~dB. The only signal-processing functions used from
+NumPy are \texttt{fft}, \texttt{ifft} and \texttt{convolve}; no built-in OFDM or 5G function is used, and fixed random seeds
 (listed in the README) make every result reproducible. Two channels are used:
 \begin{itemize}
   \item \textbf{Scenario 1}, a short channel: taps up to a delay of 4 samples (0.26~$\mu$s);
@@ -110,7 +110,7 @@ task requires, the same $\Ncp$ is used for all 14 OFDM symbols of the slot. The 
 
 \begin{table}[!htb]
   \centering
-  \caption{CP design. The rms delay spread is $\tau_{\mathrm{rms}}^2 = \sum_\ell \sigma_\ell^2 \ell^2 - (\sum_\ell \sigma_\ell^2 \ell)^2$ (in samples), and the coherence bandwidth uses the rule of thumb $B_c \approx 1/(5\tau_{\mathrm{rms}})$.}
+  \caption{CP design. The rms delay spread is $\tau_{\mathrm{rms}}^2 = \sum_\ell \sigma_\ell^2 \ell^2 - (\sum_\ell \sigma_\ell^2 \ell)^2$ (in samples; the tap powers sum to 1), and the coherence bandwidth uses the rule of thumb $B_c \approx 1/(5\tau_{\mathrm{rms}})$.}
   \label{tab:cp}
   \begin{tabular}{lcc}
     \toprule
@@ -200,7 +200,7 @@ samples of margin for timing errors and filter tails.
 
 \textbf{Check by simulation.} The markers in Fig.~\ref{fig:interference} are measured by sending
 noise-free slots through the transmitter, channel and receiver of Tasks 2--4 over 1000 random channels.
-They agree with \eqref{eq:pint} within 2.6\% (SINR within 0.1 dB), and for $\Ncp \ge L - 1$ the measured
+They agree with \eqref{eq:pint} within 2.6\% (SINR within about 0.1 dB), and for $\Ncp \ge L - 1$ the measured
 interference is zero.
 
 
@@ -209,7 +209,7 @@ interference is zero.
 \section{Task 2 - Transmitter}
 % =====================================================================
 
-Each block of Fig.~2 is one function of the transmitter.
+Each block of Fig.~2 of the assignment is one function of the transmitter.
 \begin{enumerate}[label=(\alph*)]
   \item \textbf{Data generation} (\texttt{generate\_data}). The 7168 data symbols are drawn at random,
         with equal probability, from the 4-QAM points $(\pm 1 \pm j)/\sqrt{2}$ of Assignment 2. Every
@@ -228,7 +228,7 @@ Each block of Fig.~2 is one function of the transmitter.
         \end{itemize}
 \end{enumerate}
 Since $F$ is unitary, $\|d_i\|^2 = \|\dt_i\|^2 = N$, so the transmitted signal has average power 1.
-Each block was tested on its own, for $\Ncp = 4$ and 75, and gives exactly the expected result.
+Each block was tested on its own, for $\Ncp = 4$ and 75, and gives the expected result up to rounding errors.
 
 % =====================================================================
 \section{Task 3 - Channel}
@@ -237,7 +237,7 @@ Each block was tested on its own, for $\Ncp = 4$ and 75, and gives exactly the e
 The channel has three functions.
 \begin{itemize}
   \item \textbf{Taps} (\texttt{channel\_taps}). For each scenario one tap vector $h$ is drawn, of length
-        $L$ = last tap + 1 (5 in Scenario 1, 76 in Scenario 2). The taps of Table 1 are independent,
+        $L$ = last tap + 1 (5 in Scenario 1, 76 in Scenario 2). The taps of Table 1 of the assignment are independent,
         $h[\ell] \sim \mathcal{CN}(0, \sigma_\ell^2)$, drawn as $\sigma_\ell (a + jb)/\sqrt{2}$ with
         $a, b \sim \mathcal{N}(0, 1)$. All other taps are zero. The seed is fixed: 2027 for Scenario 1
         and 2028 for Scenario 2.
@@ -293,7 +293,7 @@ also checked against the sum $y[m] = \sum_\ell h[\ell]\, x[m - \ell]$, and they 
 \section{Task 4 - Receiver}
 % =====================================================================
 
-The receiver knows the channel taps $h$. Each block of Fig.~3 is one function.
+The receiver knows the channel taps $h$. Each block of Fig.~3 of the assignment is one function.
 \begin{enumerate}[label=(\alph*)]
   \item \textbf{OFDM demodulation.}
         \begin{itemize}
@@ -328,7 +328,7 @@ regions can be used. It does not change the SNR of a subcarrier, because signal 
 by the same number. On a faded subcarrier (small $|H[k]|$) the noise becomes large (noise
 enhancement). This explains the spread of the equalized values in Task 5(c).
 
-\textbf{Symbol errors (extra).} Fig.~3 ends at $\hat{s}$. To compare the runs in Task 5, $\hat{s}$ is
+\textbf{Symbol errors (extra).} Fig.~3 of the assignment ends at $\hat{s}$. To compare the runs in Task 5, $\hat{s}$ is
 also passed to the minimum-distance 4-QAM detector of Assignment 2 (\texttt{detect\_symbols}), and the
 errors are counted. On a subcarrier with SNR $\SNR_k$, the 4-QAM error probability is
 \begin{equation}
@@ -345,8 +345,8 @@ so the expected number of errors in a slot is $14 \sum_k P_e(\SNR_k)$.
 All figures are made by the main script, which takes the scenario and the CP length as inputs. Every
 run sends the same data, and the runs of one scenario use the same channel and noise. In (c), OFDM symbol $i = 7$ is
 shown, and the colour of each point is $|H[k]|^2$ of its subcarrier. All equalized plots use the same
-axes. Each run has one extra figure: the error after the equalizer on every subcarrier, next to its
-expected value \eqref{eq:eqnoise}.
+axes. Each run has two extra figures: the amplitude histogram of $x[m]$, and the error after the equalizer
+on every subcarrier next to its expected value \eqref{eq:eqnoise}.
 
 % ---------------------------------------------------------------------
 \subsection{\texorpdfstring{Scenario 1 ($\Ncp = 4$)}{Scenario 1 (Ncp = 4)}}
@@ -358,7 +358,7 @@ expected value \eqref{eq:eqnoise}.
     \centering
     \includegraphics[width=\linewidth]{scenario1_cp4/channel_taps.png}
     \caption{Scenario 1, Task 5(a): $|h[\ell]|$ of the realization (stems) and the rms value
-      $\sigma_\ell$ of Table 1 (orange).}
+      $\sigma_\ell$ of Table 1 of the assignment (orange).}
     \label{fig:s1-taps}
   \end{minipage}\hfill
   \begin{minipage}[t]{0.485\textwidth}
@@ -464,7 +464,7 @@ expected value \eqref{eq:eqnoise}.
     \centering
     \includegraphics[width=\linewidth]{scenario2_cp75/channel_taps.png}
     \caption{Scenario 2, Task 5(a): $|h[\ell]|$ of the realization (stems) and the rms value
-      $\sigma_\ell$ of Table 1 (orange).}
+      $\sigma_\ell$ of Table 1 of the assignment (orange).}
     \label{fig:s2-taps}
   \end{minipage}\hfill
   \begin{minipage}[t]{0.485\textwidth}
@@ -583,7 +583,7 @@ again at $m = 512 + 63 = 575$. The average power is 0.9946 instead of exactly 1,
 \begin{itemize}
   \item With the designed CP, the disturbance before the equalizer is only the noise in both scenarios
         (Table~\ref{tab:compare}): the CP removes all ISI and ICI.
-  \item The two scenarios differ only in how fast $H[k]$ changes. Scenario 2 has deep fades, and its
+  \item Apart from the CP length, the two scenarios differ mainly in how fast $H[k]$ changes. Scenario 2 has deep fades, and its
         only error comes from the deepest one, not from the CP.
 \end{itemize}
 
@@ -705,7 +705,7 @@ symbol. This has two effects:
 Both add an error to \eqref{eq:flat}, $\yt_i[k] = H[k]\dt_i[k] + \tilde{e}_i[k] + \wt_i[k]$, whose power
 on subcarrier $k$ is $D[k]$ (its mean over $k$ is \eqref{eq:pint} with $|h[\ell]|^2$ in place of $\sigma_\ell^2$). $D[k]$ changes from
 $-22.8$ to $-15.2$ dB over the subcarriers; it is computed from the channel taps, and a noise-free
-simulation of 200 slots agrees with it within about 2\% on every subcarrier. The one-tap equalizer
+simulation of 200 slots agrees with it within 0.2\% on average, and within 6\% on every subcarrier. The one-tap equalizer
 cannot remove this error:
 it divides it by $H[k]$, just like the noise. So the expected error power after the equalizer is
 $(1/\SNR + D[k])/|H[k]|^2$ instead of $1/(\SNR\,|H[k]|^2)$ (dashed lines in

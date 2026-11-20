@@ -20,7 +20,7 @@ def power_db(values):
 # (a) Channel
 
 def plot_channel_taps(taps, tap_delays, tap_powers, title, folder):
-    """Stem plot of |h[l]| against l, with the rms value sigma_l of Table 1 for comparison."""
+    """Stem plot of |h[l]| against l, with the rms value sigma_l for comparison."""
     fig, ax = plt.subplots(figsize=(4.6, 3.4))
     delays = np.asarray(tap_delays)
     markers, stems, _ = ax.stem(delays, np.abs(taps[delays]), basefmt=" ",
@@ -28,7 +28,7 @@ def plot_channel_taps(taps, tap_delays, tap_powers, title, folder):
     plt.setp(markers, color=BLUE, markersize=5)
     plt.setp(stems, color=BLUE, linewidth=1.4)
     ax.plot(delays, np.sqrt(tap_powers), linestyle="none", marker="_", markersize=12,
-            markeredgewidth=2, color=ORANGE, label="rms value $\\sigma_\\ell$ (Table 1)")
+            markeredgewidth=2, color=ORANGE, label="rms value $\\sigma_\\ell$")
     ax.axhline(0, color=INK, linewidth=0.8)
 
     ax.set_xlim(-0.04 * len(taps) - 0.5, len(taps) - 0.5 + 0.04 * len(taps))
