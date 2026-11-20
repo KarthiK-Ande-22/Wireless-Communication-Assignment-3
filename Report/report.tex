@@ -47,7 +47,9 @@
 This assignment builds a simplified OFDM link for the downlink of a 5G NR-like system,
 from scratch in Python: transmitter, multipath channel and receiver. One slot of 14 OFDM symbols is
 sent. Each OFDM symbol has $N = 512$ subcarriers ($W = 15.36$~MHz, $\Delta f = 30$~kHz), so a slot
-carries $14 \times 512 = 7168$ 4-QAM symbols. The SNR is 30~dB. Two channels are used:
+carries $14 \times 512 = 7168$ 4-QAM symbols. The SNR is 30~dB. Only \texttt{fft}, \texttt{ifft} and
+\texttt{convolve} are used from NumPy; no built-in OFDM or 5G function is used, and fixed random seeds
+(listed in the README) make every result reproducible. Two channels are used:
 \begin{itemize}
   \item \textbf{Scenario 1}, a short channel: taps up to a delay of 4 samples (0.26~$\mu$s);
   \item \textbf{Scenario 2}, a long channel: taps up to a delay of 75 samples (4.88~$\mu$s).
@@ -103,11 +105,12 @@ The condition is
 \subsection{Design}
 
 I choose the shortest CP that meets \eqref{eq:condition}, $\Ncp = L - 1$ (Table~\ref{tab:cp}). As the
-task requires, the same $\Ncp$ is used for all 14 OFDM symbols of the slot.
+task requires, the same $\Ncp$ is used for all 14 OFDM symbols of the slot. The CP must cover the
+\emph{maximum} delay $L - 1$, not the rms delay spread: in Scenario 2 the CP is 6.5 times $\tau_{\mathrm{rms}}$.
 
 \begin{table}[!htb]
   \centering
-  \caption{CP design (\texttt{Task-1/results/cp\_design.txt}). The coherence bandwidth uses the rule of thumb $B_c \approx 1/(5\tau_{\mathrm{rms}})$.}
+  \caption{CP design (\texttt{Task-1/results/cp\_design.txt}). The rms delay spread is $\tau_{\mathrm{rms}}^2 = \sum_\ell \sigma_\ell^2 \ell^2 - (\sum_\ell \sigma_\ell^2 \ell)^2$ (in samples), and the coherence bandwidth uses the rule of thumb $B_c \approx 1/(5\tau_{\mathrm{rms}})$.}
   \label{tab:cp}
   \begin{tabular}{lcc}
     \toprule
@@ -126,8 +129,12 @@ task requires, the same $\Ncp$ is used for all 14 OFDM symbols of the slot.
 
 \subsection{Justification}
 
-\textbf{Why not shorter.} A tap beyond the CP causes ISI and ICI. Averaged over the channel, their
-power per subcarrier and the resulting SINR are
+\textbf{Why not shorter.} A tap with delay $\ell > \Ncp$ makes the first $\ell - \Ncp$ samples of each
+DFT window come from the previous OFDM symbol instead of the CP of the current one. Each such sample is
+wrong by the difference of two independent unit-power samples (power 2), so this tap adds an error
+energy of $2\sigma_\ell^2(\ell - \Ncp)$ per window: ISI from symbol $i - 1$, and ICI because part of symbol
+$i$ is missing. The unitary DFT keeps this energy and spreads it over the $N$ subcarriers. So, averaged
+over the channel, the ISI + ICI power per subcarrier and the resulting SINR are
 \begin{equation}
   P_{\mathrm{int}} = \frac{2}{N} \sum_{\ell} \sigma_\ell^2 \max(\ell - \Ncp, 0), \qquad
   \mathrm{SINR} = \frac{\sum_\ell \sigma_\ell^2}{P_{\mathrm{int}} + 1/\SNR} = \frac{1}{P_{\mathrm{int}} + 10^{-3}}.
@@ -390,7 +397,8 @@ expected value \eqref{eq:eqnoise}.
         it is close to $\mathcal{CN}(0, 1)$ and $|x[m]|$ follows the Rayleigh density (mean 0.885,
         against $\sqrt{\pi}/2 = 0.886$).
   \item The average power is 1, but the peaks reach about 3 times the rms value: the peak-to-average
-        power ratio (PAPR) is 9.55 dB, a known drawback of OFDM.
+        power ratio (PAPR) is 9.55 dB. This is a known drawback of OFDM: the power amplifier must stay
+        linear over these peaks.
   \item The zoom shows how each OFDM symbol is built: its first 4 samples (the CP) are the same as its
         last 4 samples.
 \end{itemize}
@@ -529,7 +537,8 @@ again at $m = 512 + 63 = 575$. The average power is 0.9946 instead of exactly 1,
         boundary. Dividing by a small $H[k]$ makes the noise large (noise enhancement).
         Fig.~\ref{fig:s2-error} shows this: the error peaks exactly at the fades.
   \item \textbf{Symbol errors.} There is 1 error in the slot, in symbol 7 on subcarrier $k = 450$, the
-        deepest fade. \eqref{eq:ser} expects about 3, almost all on the deepest fades.
+        deepest fade. \eqref{eq:ser} expects about 3, almost all on the deepest fades. These subcarriers are
+        the ones at risk; real systems protect them with channel coding across the subcarriers.
 \end{itemize}
 
 \FloatBarrier
@@ -683,7 +692,8 @@ it divides it by $H[k]$, just like the noise. So the expected error power after 
 $(1/\SNR + D[k])/|H[k]|^2$ instead of $1/(\SNR\,|H[k]|^2)$ (dashed lines in
 Fig.~\ref{fig:short-error}). On average $D[k]$ is $1.34 \cdot 10^{-2}$, about 13 times the noise, so the
 spread is now set by the ISI and ICI, not by the noise. This is why every cluster widens: the mean SINR
-drops from 30.4 dB to 18.8 dB, and even the best subcarrier is limited to 25.7 dB.
+drops from 30.4 dB to 18.8 dB, and even the best subcarrier is limited to an SINR
+$|H[k]|^2/(1/\SNR + D[k])$ of 25.7 dB.
 
 Each tap counts with its excess delay $\ell - \Ncp$: tap 55 has only 3\% of the channel energy, but it
 reaches 51 samples into the previous symbol and causes 52\% of the interference. The ISI and ICI grow
@@ -701,7 +711,8 @@ not worth it: it costs 11.6 dB of mean SINR and turns 1 symbol error into 39.
         4 samples (0.260 $\mu$s, 0.78\% overhead) in Scenario 1 and 75 samples (4.883 $\mu$s, 12.78\%
         overhead) in Scenario 2.
   \item \textbf{Link (Tasks 2--4):} each block is one function. Without noise, the receiver gets the data
-        back exactly with this CP, but not with a CP one sample shorter.
+        back exactly with this CP, but not with a CP one sample shorter. The transmitted signal looks like
+        noise, with a Rayleigh amplitude and a PAPR of about 9.6 dB.
   \item \textbf{Results (Task 5a--c):} with this CP, each subcarrier only sees one gain $H[k]$, and the
         one-tap equalizer removes it. What is left is the noise divided by $H[k]$, so strong subcarriers
         give tight clusters and faded ones are spread. Scenario 1 has no errors; Scenario 2 has 1 error,
