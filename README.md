@@ -75,8 +75,8 @@ python3 Task-5/main.py --scenario S [--cp NCP]
 | `python3 Task-5/main.py --scenario 2 --cp 4` | Task 5 (d), Scenario 2, Ncp = 4 | `results/Task-5/scenario2_cp4/` |
 | `python3 Task-5/cp_sweep.py` | extra: the link for every Ncp from 0 to 80 | `results/Task-5/cp_sweep/` |
 
-Each run of `main.py` writes seven figures, as `.pdf` (used in the report) and
-`.png`, and a `summary.txt` with every number of that run:
+Each run of `main.py` writes seven figures as `.png` (used in the report and
+shown below), and a `summary.txt` with every number of that run:
 
 | Figure | Task 5 part |
 |---|---|

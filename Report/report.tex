@@ -171,7 +171,7 @@ and Fig.~\ref{fig:interference} compare candidate CP lengths.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.85\textwidth]{interference_vs_cp.pdf}
+  \includegraphics[width=0.85\textwidth]{interference_vs_cp.png}
   \caption{Task 1, both scenarios, against the CP length: (a) average ISI + ICI power per subcarrier and
     (b) average SINR per subcarrier. Lines: formula \eqref{eq:pint}; markers: simulation of the link over 1000 random
     channel realizations. Dash-dot: noise power $1/\SNR$ in (a) and SNR = 30 dB in (b). Dashed: the chosen
@@ -356,14 +356,14 @@ expected value \eqref{eq:eqnoise}.
   \centering
   \begin{minipage}[t]{0.485\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{scenario1_cp4/channel_taps.pdf}
+    \includegraphics[width=\linewidth]{scenario1_cp4/channel_taps.png}
     \caption{Scenario 1, Task 5(a): $|h[\ell]|$ of the realization (stems) and the rms value
       $\sigma_\ell$ of Table 1 (orange).}
     \label{fig:s1-taps}
   \end{minipage}\hfill
   \begin{minipage}[t]{0.485\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{scenario1_cp4/frequency_response.pdf}
+    \includegraphics[width=\linewidth]{scenario1_cp4/frequency_response.png}
     \caption{Scenario 1, Task 5(a): $|H[k]|^2$ in dB. \textbf{Smooth, from $-6.3$ to $+1.8$ dB.}}
     \label{fig:s1-response}
   \end{minipage}
@@ -371,7 +371,7 @@ expected value \eqref{eq:eqnoise}.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.92\textwidth]{scenario1_cp4/transmitted_signal.pdf}
+  \includegraphics[width=0.92\textwidth]{scenario1_cp4/transmitted_signal.png}
   \caption{Scenario 1 ($\Ncp = 4$), Task 5(b). Top: $|x[m]|$ for the $M = 7224$ samples of one slot.
     Bottom: zoom on OFDM symbol 0; the CP (orange) is a copy of its last 4 samples (green).
     \textbf{A noise-like signal; the CP repeats the end of each symbol.}}
@@ -380,7 +380,7 @@ expected value \eqref{eq:eqnoise}.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.6\textwidth]{scenario1_cp4/amplitude_histogram.pdf}
+  \includegraphics[width=0.6\textwidth]{scenario1_cp4/amplitude_histogram.png}
   \caption{Scenario 1 ($\Ncp = 4$), Task 5(b): histogram of the amplitudes $|x[m]|$ of the slot and
     the Rayleigh density $2r e^{-r^2}$ of a $\mathcal{CN}(0, 1)$ sample. \textbf{The amplitudes are
     Rayleigh distributed; PAPR 9.55 dB.}}
@@ -413,14 +413,14 @@ expected value \eqref{eq:eqnoise}.
   \centering
   \begin{minipage}[t]{0.485\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{scenario1_cp4/received_symbols.pdf}
+    \includegraphics[width=\linewidth]{scenario1_cp4/received_symbols.png}
     \caption{Scenario 1 ($\Ncp = 4$), Task 5(c): received values $\yt_7[k]$, before the equalizer.
       \textbf{Four arms: rotated copies of the curve $H[k]$.}}
     \label{fig:s1-rx}
   \end{minipage}\hfill
   \begin{minipage}[t]{0.485\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{scenario1_cp4/equalized_symbols.pdf}
+    \includegraphics[width=\linewidth]{scenario1_cp4/equalized_symbols.png}
     \caption{Scenario 1 ($\Ncp = 4$), Task 5(c): equalized values $\deq_7[k]$ and the 4-QAM points
       (red). \textbf{Four tight clusters; no errors.}}
     \label{fig:s1-eq}
@@ -429,7 +429,7 @@ expected value \eqref{eq:eqnoise}.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=\textwidth]{scenario1_cp4/equalization_error.pdf}
+  \includegraphics[width=\textwidth]{scenario1_cp4/equalization_error.png}
   \caption{Scenario 1 ($\Ncp = 4$), extra figure for Task 5(c): error power after the equalizer on
     every subcarrier. Grey: OFDM symbol 7; blue: mean over the OFDM symbols 1--13; dashed: the
     expected value \eqref{eq:eqnoise}. \textbf{The error is the mirror image of $|H[k]|^2$
@@ -462,14 +462,14 @@ expected value \eqref{eq:eqnoise}.
   \centering
   \begin{minipage}[t]{0.485\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{scenario2_cp75/channel_taps.pdf}
+    \includegraphics[width=\linewidth]{scenario2_cp75/channel_taps.png}
     \caption{Scenario 2, Task 5(a): $|h[\ell]|$ of the realization (stems) and the rms value
       $\sigma_\ell$ of Table 1 (orange).}
     \label{fig:s2-taps}
   \end{minipage}\hfill
   \begin{minipage}[t]{0.485\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{scenario2_cp75/frequency_response.pdf}
+    \includegraphics[width=\linewidth]{scenario2_cp75/frequency_response.png}
     \caption{Scenario 2, Task 5(a): $|H[k]|^2$ in dB. \textbf{Fast changes and deep fades, from $-26.0$
       to $+6.2$ dB.}}
     \label{fig:s2-response}
@@ -478,7 +478,7 @@ expected value \eqref{eq:eqnoise}.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.92\textwidth]{scenario2_cp75/transmitted_signal.pdf}
+  \includegraphics[width=0.92\textwidth]{scenario2_cp75/transmitted_signal.png}
   \caption{Scenario 2 ($\Ncp = 75$), Task 5(b), as in Fig.~\ref{fig:s1-x}. Top: $|x[m]|$ for the
     $M = 8218$ samples of one slot. Bottom: zoom on OFDM symbol 0; the samples $m = 0$--74 (CP) repeat the samples $m = 512$--586.
     \textbf{The same noise-like signal; 12.8\% of the samples are CP.}}
@@ -487,7 +487,7 @@ expected value \eqref{eq:eqnoise}.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.6\textwidth]{scenario2_cp75/amplitude_histogram.pdf}
+  \includegraphics[width=0.6\textwidth]{scenario2_cp75/amplitude_histogram.png}
   \caption{Scenario 2 ($\Ncp = 75$), Task 5(b): histogram of the amplitudes $|x[m]|$ of the slot and
     the Rayleigh density $2r e^{-r^2}$. \textbf{Again Rayleigh distributed; PAPR 9.57 dB.}}
   \label{fig:s2-hist}
@@ -516,14 +516,14 @@ again at $m = 512 + 63 = 575$. The average power is 0.9946 instead of exactly 1,
   \centering
   \begin{minipage}[t]{0.485\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{scenario2_cp75/received_symbols.pdf}
+    \includegraphics[width=\linewidth]{scenario2_cp75/received_symbols.png}
     \caption{Scenario 2 ($\Ncp = 75$), Task 5(c): received values $\yt_7[k]$, before the equalizer.
       \textbf{A cloud without structure; faded subcarriers (dark) near the origin.}}
     \label{fig:s2-rx}
   \end{minipage}\hfill
   \begin{minipage}[t]{0.485\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{scenario2_cp75/equalized_symbols.pdf}
+    \includegraphics[width=\linewidth]{scenario2_cp75/equalized_symbols.png}
     \caption{Scenario 2 ($\Ncp = 75$), Task 5(c): equalized values $\deq_7[k]$ and the 4-QAM points
       (red). \textbf{Tight clusters, except for the faded (dark) subcarriers.}}
     \label{fig:s2-eq}
@@ -532,7 +532,7 @@ again at $m = 512 + 63 = 575$. The average power is 0.9946 instead of exactly 1,
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=\textwidth]{scenario2_cp75/equalization_error.pdf}
+  \includegraphics[width=\textwidth]{scenario2_cp75/equalization_error.png}
   \caption{Scenario 2 ($\Ncp = 75$), extra figure for Task 5(c): error power after the equalizer on
     every subcarrier, as in Fig.~\ref{fig:s1-error}. \textbf{The peaks are the fades of
     Fig.~\ref{fig:s2-response}.}}
@@ -602,12 +602,12 @@ $\Ncp = 4$ (right or bottom), on the same axes.
   \centering
   \begin{subfigure}[t]{0.485\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{scenario2_cp75/received_symbols.pdf}
+    \includegraphics[width=\linewidth]{scenario2_cp75/received_symbols.png}
     \caption{Designed CP, $\Ncp = 75$ (Task 5c).}
   \end{subfigure}\hfill
   \begin{subfigure}[t]{0.485\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{scenario2_cp4/received_symbols.pdf}
+    \includegraphics[width=\linewidth]{scenario2_cp4/received_symbols.png}
     \caption{Too short CP, $\Ncp = 4$ (Task 5d).}
   \end{subfigure}
   \caption{Scenario 2, Task 5(d): received values $\yt_7[k]$ before the equalizer, with the designed CP
@@ -619,12 +619,12 @@ $\Ncp = 4$ (right or bottom), on the same axes.
   \centering
   \begin{subfigure}[t]{0.485\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{scenario2_cp75/equalized_symbols.pdf}
+    \includegraphics[width=\linewidth]{scenario2_cp75/equalized_symbols.png}
     \caption{Designed CP, $\Ncp = 75$ (Task 5c).}
   \end{subfigure}\hfill
   \begin{subfigure}[t]{0.485\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{scenario2_cp4/equalized_symbols.pdf}
+    \includegraphics[width=\linewidth]{scenario2_cp4/equalized_symbols.png}
     \caption{Too short CP, $\Ncp = 4$ (Task 5d).}
   \end{subfigure}
   \caption{Scenario 2, Task 5(d): equalized values $\deq_7[k]$ and the 4-QAM points (red), with the
@@ -637,14 +637,14 @@ $\Ncp = 4$ (right or bottom), on the same axes.
   \centering
   \begin{subfigure}{\textwidth}
     \centering
-    \includegraphics[width=0.9\linewidth]{scenario2_cp75/equalization_error.pdf}
+    \includegraphics[width=0.9\linewidth]{scenario2_cp75/equalization_error.png}
     \caption{Designed CP, $\Ncp = 75$ (Task 5c): $D[k] = 0$.}
   \end{subfigure}
 
   \vspace{4pt}
   \begin{subfigure}{\textwidth}
     \centering
-    \includegraphics[width=0.9\linewidth]{scenario2_cp4/equalization_error.pdf}
+    \includegraphics[width=0.9\linewidth]{scenario2_cp4/equalization_error.png}
     \caption{Too short CP, $\Ncp = 4$ (Task 5d).}
   \end{subfigure}
   \caption{Scenario 2, extra figure for Task 5(d): error power after the equalizer on every subcarrier,
