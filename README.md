@@ -75,7 +75,7 @@ python3 Task-5/main.py --scenario S [--cp NCP]
 | `python3 Task-5/main.py --scenario 2 --cp 4` | Task 5 (d), Scenario 2, Ncp = 4 | `Task-5/results/scenario2_cp4/` | ~3 s |
 | `python3 Task-5/cp_sweep.py` | extra: the link for every Ncp from 0 to 80 | `Task-5/results/cp_sweep/` | ~2 s |
 
-Each run of `main.py` writes six figures, as `.pdf` (used in the report) and
+Each run of `main.py` writes seven figures, as `.pdf` (used in the report) and
 `.png`, and a `summary.txt` with every number of that run:
 
 | Figure | Task 5 part |
@@ -83,6 +83,7 @@ Each run of `main.py` writes six figures, as `.pdf` (used in the report) and
 | `channel_taps` | (a) \|h[l]\| against the tap index |
 | `frequency_response` | (a) \|H[k]\|² in dB against the subcarrier index |
 | `transmitted_signal` | (b) \|x[m]\| of the whole slot, and a zoom on OFDM symbol 0 that shows the CP is a copy of its last Ncp samples |
+| `amplitude_histogram` | (b) histogram of the amplitudes \|x[m]\| with the Rayleigh density, mean amplitude and PAPR |
 | `received_symbols` | (c) received values ỹ₇[k], before the equalizer |
 | `equalized_symbols` | (c) equalized values and the 4-QAM points |
 | `equalization_error` | extra: error after the equalizer on every subcarrier, with its expected value |
@@ -197,7 +198,9 @@ less it does not. The DFT `fft / √N` equals F y within 4.8·10⁻¹³.
 
 ### Task 5: results
 
-From the `summary.txt` file of each run. Averages use the OFDM symbols 1–13.
+From the `summary.txt` file of each run. Averages use the OFDM symbols 1–13, because
+with a too short CP symbol 0 has nothing before it and gets only half of the
+interference (measured: 0.51).
 
 | | Scenario 1, Ncp = 4 | Scenario 2, Ncp = 75 | Scenario 2, Ncp = 4 (5d) |
 |---|---|---|---|
@@ -217,8 +220,8 @@ From the `summary.txt` file of each run. Averages use the OFDM symbols 1–13.
 | Symbol errors in the slot of 7168 | 0 | 1 (k = 450, deepest fade) | 39 |
 
 - **(a)** Scenario 1 is a smooth channel; Scenario 2 changes fast and has deep fades.
-- **(b)** |x[m]| looks like noise with a Rayleigh amplitude; the zoom shows that
-  the CP is a copy of the last Ncp samples of each OFDM symbol.
+- **(b)** |x[m]| looks like noise, and its amplitudes follow the Rayleigh density;
+  the zoom shows that the CP is a copy of the last Ncp samples of each OFDM symbol.
 - **(c)** Before the equalizer the points are rotated and scaled by H[k]. After it,
   the error on subcarrier k has variance 1/(SNR |H[k]|²): tight clusters on strong
   subcarriers, wide spread on faded ones.
@@ -235,6 +238,7 @@ From the `summary.txt` file of each run. Averages use the OFDM symbols 1–13.
 </p>
 <p align="center">
   <img src="Task-5/results/scenario1_cp4/transmitted_signal.png" width="80%" alt="Scenario 1: transmitted signal">
+  <img src="Task-5/results/scenario1_cp4/amplitude_histogram.png" width="55%" alt="Scenario 1: amplitude histogram">
 </p>
 <p align="center">
   <img src="Task-5/results/scenario1_cp4/received_symbols.png" width="40%" alt="Scenario 1: received symbols">
@@ -249,6 +253,7 @@ From the `summary.txt` file of each run. Averages use the OFDM symbols 1–13.
 </p>
 <p align="center">
   <img src="Task-5/results/scenario2_cp75/transmitted_signal.png" width="80%" alt="Scenario 2: transmitted signal">
+  <img src="Task-5/results/scenario2_cp75/amplitude_histogram.png" width="55%" alt="Scenario 2: amplitude histogram">
 </p>
 <p align="center">
   <img src="Task-5/results/scenario2_cp75/received_symbols.png" width="40%" alt="Scenario 2, Ncp = 75: received symbols">
@@ -325,7 +330,7 @@ y -> split_into_blocks -> remove_cyclic_prefix -> ofdm_demodulate (F) -> equaliz
 
 ## Report
 
-[Report/report.pdf](Report/report.pdf), 14 pages:
+[Report/report.pdf](Report/report.pdf), 15 pages:
 
 1. **Overview**: what the link is, and why OFDM and a cyclic prefix are used
 2. **Task 1**: the condition Ncp ≥ L - 1, the CP design, and why not shorter or longer

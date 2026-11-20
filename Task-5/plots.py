@@ -64,8 +64,8 @@ def plot_frequency_response(response, title, folder):
 
 # (b) Transmitted signal
 
-def plot_whole_slot(ax, ax_hist, x, block_length, cp_length, title):
-    """|x[m]| of the whole slot with every CP shaded, and a histogram of |x[m]| on the side."""
+def plot_whole_slot(ax, x, block_length, cp_length, title):
+    """|x[m]| of the whole slot, with every CP shaded."""
     amplitude = np.abs(x)
     for i in range(len(x) // block_length):
         start = i * block_length
@@ -80,15 +80,6 @@ def plot_whole_slot(ax, ax_hist, x, block_length, cp_length, title):
     ax.set_ylabel("$|x[m]|$")
     ax.set_title(title)
     ax.legend(loc="upper right", ncol=3, framealpha=0.95)
-
-    # Rayleigh density 2 r exp(-r^2): the amplitude of a CN(0, 1) sample
-    bins = np.linspace(0, amplitude.max(), 40)
-    ax_hist.hist(amplitude, bins=bins, density=True, orientation="horizontal", color=BLUE, alpha=0.45)
-    r = np.linspace(0, amplitude.max(), 200)
-    ax_hist.plot(2 * r * np.exp(-r ** 2), r, color=INK, linewidth=1.2, label="Rayleigh pdf")
-    ax_hist.set_xlabel("density")
-    ax_hist.legend(loc="upper right", fontsize=8)
-    ax_hist.tick_params(labelleft=False)
 
 
 def plot_cp_zoom(ax_start, ax_end, x, num_subcarriers, cp_length):
@@ -118,12 +109,35 @@ def plot_transmitted_signal(x, num_subcarriers, cp_length, title, folder):
     """Top: |x[m]| of the whole slot. Bottom: zoom on the CP of OFDM symbol 0."""
     fig = plt.figure(figsize=(9, 6.0))
     top, bottom = fig.subfigures(2, 1, height_ratios=[1, 0.9], hspace=0.04)
-    ax, ax_hist = top.subplots(1, 2, sharey=True,
-                               gridspec_kw={"width_ratios": [5, 1], "wspace": 0.04})
+    ax = top.subplots()
     ax_start, ax_end = bottom.subplots(1, 2, sharey=True, gridspec_kw={"wspace": 0.06})
-    plot_whole_slot(ax, ax_hist, x, num_subcarriers + cp_length, cp_length, title)
+    plot_whole_slot(ax, x, num_subcarriers + cp_length, cp_length, title)
     plot_cp_zoom(ax_start, ax_end, x, num_subcarriers, cp_length)
     save_figure(fig, folder, "transmitted_signal")
+
+
+def plot_amplitude_histogram(x, title, folder):
+    """Histogram of |x[m]| with the Rayleigh density 2 r exp(-r^2) of a CN(0, 1) sample."""
+    amplitude = np.abs(x)
+    power = amplitude ** 2
+    papr_db = 10 * np.log10(power.max() / power.mean())
+
+    fig, ax = plt.subplots(figsize=(6.0, 3.6))
+    bins = np.linspace(0, amplitude.max(), 60)
+    ax.hist(amplitude, bins=bins, density=True, color=BLUE, alpha=0.5, label="histogram of $|x[m]|$")
+    r = np.linspace(0, amplitude.max(), 300)
+    ax.plot(r, 2 * r * np.exp(-r ** 2), color=ORANGE, linewidth=1.8,
+            label="Rayleigh pdf $2r\\,e^{-r^2}$")
+    ax.plot([], [], linestyle="none",
+            label=f"mean $|x[m]|$ = {amplitude.mean():.3f} (Rayleigh: 0.886)")
+    ax.plot([], [], linestyle="none", label=f"PAPR = {papr_db:.2f} dB")
+    ax.set_xlim(0, amplitude.max())
+    ax.set_xlabel("amplitude $|x[m]|$")
+    ax.set_ylabel("probability density")
+    ax.set_title(title)
+    ax.grid(True)
+    ax.legend(loc="upper right", fontsize=8, framealpha=0.95)
+    save_figure(fig, folder, "amplitude_histogram")
 
 
 # (c) Equalization

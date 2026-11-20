@@ -32,3 +32,4 @@ Check of the ISI + ICI formula: Scenario 2, Ncp = 4, no noise, 200 slots of rand
   spread of one slot (std / mean)        : 7.2 %
   per subcarrier: measured / D[k], mean  : 0.9985
   per subcarrier: measured / D[k], std   : 0.0219
+  symbol 0 (nothing before it) / mean D  : 0.506

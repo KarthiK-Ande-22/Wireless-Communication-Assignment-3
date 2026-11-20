@@ -39,7 +39,7 @@ def check_interference_formula(scenario, cp_length):
     response = frequency_response(taps, NUM_SUBCARRIERS)
     expected = interference_power_per_subcarrier(taps, cp_length, NUM_SUBCARRIERS)
 
-    power_per_slot = []
+    power_per_slot, power_first_symbol = [], []
     power_per_subcarrier = np.zeros(NUM_SUBCARRIERS)
     for slot in range(NUM_CHECK_SLOTS):
         data = generate_data(NUM_DATA_SYMBOLS, np.random.default_rng(slot))
@@ -47,7 +47,9 @@ def check_interference_formula(scenario, cp_length):
         y = multipath_channel(x, taps, np.inf, np.random.default_rng(0))   # no noise
         _, received_grid, _ = ofdm_receiver(y, response, NUM_SUBCARRIERS, cp_length,
                                             NUM_OFDM_SYMBOLS)
-        interference = np.abs(received_grid - response[:, np.newaxis] * grid)[:, 1:] ** 2
+        error_power = np.abs(received_grid - response[:, np.newaxis] * grid) ** 2
+        interference = error_power[:, 1:]                 # symbols 1-13
+        power_first_symbol.append(np.mean(error_power[:, 0]))
         power_per_slot.append(np.mean(interference))
         power_per_subcarrier += np.mean(interference, axis=1) / NUM_CHECK_SLOTS
 
@@ -62,6 +64,8 @@ def check_interference_formula(scenario, cp_length):
         f"{100 * np.std(power_per_slot) / np.mean(power_per_slot):.1f} %",
         f"  per subcarrier: measured / D[k], mean  : {np.mean(ratio):.4f}",
         f"  per subcarrier: measured / D[k], std   : {np.std(ratio):.4f}",
+        f"  symbol 0 (nothing before it) / mean D  : "
+        f"{np.mean(power_first_symbol) / np.mean(expected):.3f}",
     ]
 
 

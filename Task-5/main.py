@@ -240,6 +240,7 @@ def make_figures(scenario, cp_length, signals, numbers, folder):
     # (b) transmitted signal
     plots.plot_transmitted_signal(signals.x, NUM_SUBCARRIERS, cp_length,
                                   f"{name}: transmitted signal of one slot", folder)
+    plots.plot_amplitude_histogram(signals.x, f"{name}: amplitude of $x[m]$", folder)
     # (c) equalization
     plots.plot_received_symbols(signals.received_grid[:, i], signals.response,
                                 f"{name}: received $\\tilde{{y}}_{{{i}}}[k]$",
