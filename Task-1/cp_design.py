@@ -1,31 +1,11 @@
-"""Task 1: design of the cyclic prefix (CP) length for both scenarios.
-
-Design rule: the CP must be at least as long as the channel memory,
-
-    Ncp >= L - 1        (L - 1 = index of the last non-zero tap).
-
-Then every sample inside the DFT window only sees the current OFDM symbol
-(no ISI), and the linear convolution with h acts like a circular one (no ICI).
-The same Ncp is used for all 14 OFDM symbols of a slot.
-
-This script
-  1. prints and saves the CP design of both scenarios,
-  2. compares candidate CP lengths: overhead and energy cost against the
-     ISI + ICI power and the SINR they leave,
-  3. checks the ISI + ICI formula by Monte Carlo simulation of the whole link
-     (Tasks 2-4) over many random channel realizations,
-  4. plots the ISI + ICI power and the SINR against the CP length.
-
-Run from the project root:   python3 Task-1/cp_design.py
-"""
+"""Task 1: CP length design for both scenarios. Run this file to make Table 1, Table 2 and Fig. 1."""
 import sys
 from pathlib import Path
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-# parameters.py and plot_style.py are in the project root; the blocks of the
-# link (used only for the Monte Carlo check) are in the folders of Tasks 2-4
+# parameters and plot style are in the project root, the link blocks in Tasks 2-4
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 for folder in ["", "Task-2", "Task-3", "Task-4"]:
     sys.path.append(str(PROJECT_ROOT / folder))
@@ -53,16 +33,15 @@ SIMULATED_CP_LENGTHS = {
 }
 
 
-# ---------------------------------------------------------------------------
 # Design functions
-# ---------------------------------------------------------------------------
+
 def minimum_cp_length(tap_delays):
-    """Shortest CP without ISI: the delay of the last non-zero tap, L - 1."""
+    """Return the shortest CP without ISI, L - 1 (delay of the last tap)."""
     return max(tap_delays)
 
 
 def rms_delay_spread(tap_delays, tap_powers):
-    """Power-weighted standard deviation of the tap delays (in samples)."""
+    """Return the rms delay spread in samples."""
     delays = np.asarray(tap_delays, dtype=float)
     weights = np.asarray(tap_powers) / np.sum(tap_powers)
     mean_delay = np.sum(weights * delays)
@@ -70,23 +49,13 @@ def rms_delay_spread(tap_delays, tap_powers):
 
 
 def average_interference_power(tap_delays, tap_powers, cp_length, num_subcarriers):
-    """Average ISI + ICI power per subcarrier when the CP is too short.
-
-    A tap with delay l > Ncp reaches (l - Ncp) samples back into the previous
-    OFDM symbol. On these samples the receiver gets the previous symbol
-    instead of the cyclic copy of the current one: an error of power
-    2 |h[l]|^2 per sample (two independent samples of unit power). The unitary
-    DFT spreads this error energy over the N subcarriers. Averaged over the
-    channel (E|h[l]|^2 = sigma_l^2):
-
-        P_int = (2 / N) * sum_l  sigma_l^2 * max(l - Ncp, 0)
-    """
+    """Return P_int = (2 / N) sum_l sigma_l^2 max(l - Ncp, 0), the average ISI + ICI power."""
     excess_delays = np.maximum(np.asarray(tap_delays) - cp_length, 0)
     return 2 / num_subcarriers * np.sum(np.asarray(tap_powers) * excess_delays)
 
 
 def average_sinr(tap_delays, tap_powers, cp_length, num_subcarriers):
-    """Average SINR per subcarrier: E|H[k]|^2 / (P_int + 1/SNR), with E|H[k]|^2 = 1."""
+    """Return the average SINR per subcarrier, E|H[k]|^2 / (P_int + 1/SNR)."""
     signal_power = np.sum(tap_powers)
     interference = average_interference_power(tap_delays, tap_powers, cp_length,
                                               num_subcarriers)
@@ -94,17 +63,7 @@ def average_sinr(tap_delays, tap_powers, cp_length, num_subcarriers):
 
 
 def interference_power_per_subcarrier(taps, cp_length, num_subcarriers):
-    """Exact ISI + ICI power on each subcarrier, for one channel realization.
-
-    Valid for OFDM symbols i >= 1 (symbol 0 has nothing sent before it, so it
-    sees only half of this power). Averaged over the data symbols:
-
-        D[k] = (2 / N) * sum_{q = Ncp+1}^{L-1} |H_q[k]|^2,
-        H_q[k] = sum_{l >= q} h[l] exp(-j 2 pi k l / N),
-
-    where H_q is the response of only those taps that reach q or more samples
-    back. The mean of D[k] over k is (2 / N) sum_l |h[l]|^2 max(l - Ncp, 0).
-    """
+    """Return D[k], the ISI + ICI power on each subcarrier for one channel (symbols 1-13)."""
     power = np.zeros(num_subcarriers)
     for first_late_tap in range(cp_length + 1, len(taps)):
         late_taps = np.zeros_like(taps)
@@ -114,7 +73,7 @@ def interference_power_per_subcarrier(taps, cp_length, num_subcarriers):
 
 
 def shortest_cp_below(tap_delays, tap_powers, power_limit, num_subcarriers):
-    """Smallest Ncp whose average ISI + ICI power is at most power_limit."""
+    """Return the smallest Ncp whose average ISI + ICI power is at most power_limit."""
     cp_length = 0
     while average_interference_power(tap_delays, tap_powers, cp_length,
                                      num_subcarriers) > power_limit:
@@ -123,22 +82,14 @@ def shortest_cp_below(tap_delays, tap_powers, power_limit, num_subcarriers):
 
 
 def db(value):
-    """10 log10(value)."""
+    """Return 10 log10(value)."""
     return 10 * np.log10(value)
 
 
-# ---------------------------------------------------------------------------
 # Monte Carlo check of P_int with the link of Tasks 2-4
-# ---------------------------------------------------------------------------
-def simulate_average_interference(scenario, cp_lengths, num_realizations, rng):
-    """Measured ISI + ICI power and signal power, averaged over many channels.
 
-    For every realization, new data and new channel taps are drawn, and the
-    slot is sent through the transmitter, channel and receiver without noise
-    for every CP length (the same data and channel for all CP lengths). The
-    disturbance y~_i[k] - H[k] d~_i[k] is then only ISI + ICI. Averages use
-    the OFDM symbols 1-13 (nothing is sent before symbol 0).
-    """
+def simulate_average_interference(scenario, cp_lengths, num_realizations, rng):
+    """Return the measured ISI + ICI and signal power over many noise-free channels (symbols 1-13)."""
     profile = CHANNEL_PROFILES[scenario]
     no_noise_snr = np.inf
     interference = np.zeros(len(cp_lengths))
@@ -161,11 +112,10 @@ def simulate_average_interference(scenario, cp_lengths, num_realizations, rng):
     return interference / num_realizations, signal / num_realizations
 
 
-# ---------------------------------------------------------------------------
 # Report tables and figure
-# ---------------------------------------------------------------------------
+
 def design_summary():
-    """The CP design of both scenarios, as a list of text lines."""
+    """Return the CP design of both scenarios as text lines."""
     noise_power = 1 / SNR
     lines = ["Task 1: CP design (N = 512, W = 15.36 MHz, sample period 65.1 ns)",
              "The same Ncp is used for all 14 OFDM symbols of a slot.", ""]
@@ -174,7 +124,7 @@ def design_summary():
         delays, powers = profile["tap_delays"], profile["tap_powers"]
         cp_length = minimum_cp_length(delays)
         delay_spread = rms_delay_spread(delays, powers)
-        # Rule of thumb: coherence bandwidth = 1 / (5 x rms delay spread)
+        # Rule of thumb: B_c = 1 / (5 tau_rms)
         coherence_bandwidth = 1 / (5 * delay_spread * SAMPLE_PERIOD)
         soft_cp = shortest_cp_below(delays, powers, noise_power / 10, NUM_SUBCARRIERS)
         nr_interference = average_interference_power(delays, powers, NR_NORMAL_CP_LENGTH,
@@ -207,7 +157,7 @@ def design_summary():
 
 
 def candidate_summary():
-    """Cost and benefit of candidate CP lengths (average over the channel)."""
+    """Return the cost and SINR of the candidate CP lengths as text lines."""
     lines = ["Candidate CP lengths (average over the channel, SNR = 30 dB)",
              "   Ncp   us      overhead   energy loss   ISI+ICI     SINR      SINR loss"]
     for scenario, profile in CHANNEL_PROFILES.items():
@@ -228,7 +178,7 @@ def candidate_summary():
 
 
 def monte_carlo_summary(simulated):
-    """Monte Carlo results next to the formula, as text lines."""
+    """Return the Monte Carlo results next to the formula as text lines."""
     lines = [f"Monte Carlo check: {NUM_CHANNEL_REALIZATIONS} random channel realizations "
              f"(seed {CP_CHECK_SEED}), no noise, OFDM symbols 1-13",
              "   Ncp   ISI+ICI formula   simulated   difference   SINR formula   simulated"]
@@ -252,7 +202,7 @@ def monte_carlo_summary(simulated):
 
 
 def plot_interference_and_sinr(simulated):
-    """Panel (a): average ISI + ICI power. Panel (b): average SINR. Both against Ncp."""
+    """Plot (a) the average ISI + ICI power and (b) the average SINR against Ncp."""
     noise_power_db = db(1 / SNR)
     fig, (ax_power, ax_sinr) = plt.subplots(2, 1, figsize=(7.5, 7.2), sharex=True,
                                             gridspec_kw={"height_ratios": [3, 2]},
@@ -264,7 +214,7 @@ def plot_interference_and_sinr(simulated):
         delays, powers = profile["tap_delays"], profile["tap_powers"]
         cp_design = minimum_cp_length(delays)
 
-        # Formula: for Ncp >= L - 1 the interference is exactly zero (minus infinity in dB)
+        # Formula; zero for Ncp >= L - 1, which cannot be drawn in dB
         cp_lengths = np.arange(cp_design)
         interference = [average_interference_power(delays, powers, cp, NUM_SUBCARRIERS)
                         for cp in cp_lengths]
@@ -275,7 +225,7 @@ def plot_interference_and_sinr(simulated):
         ax_sinr.plot(all_cp_lengths, sinr, color=color, linewidth=1.4,
                      label=f"Scenario {scenario}: formula")
 
-        # Monte Carlo points (zero interference cannot be drawn in dB)
+        # Monte Carlo points
         simulated_cp = np.array(SIMULATED_CP_LENGTHS[scenario])
         measured_interference, measured_signal = simulated[scenario]
         nonzero = simulated_cp < cp_design

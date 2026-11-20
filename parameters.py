@@ -1,12 +1,6 @@
-"""System parameters of the OFDM link (Table 2) and the two channels (Table 1).
+"""System parameters (Table 2), channels (Table 1) and random seeds, shared by all scripts."""
 
-Every script imports its numbers from this file, so each value is written
-only once.
-"""
-
-# ---------------------------------------------------------------------------
 # OFDM numerology (Table 2)
-# ---------------------------------------------------------------------------
 BANDWIDTH = 15.36e6                          # W in Hz, also the sampling rate
 SAMPLE_PERIOD = 1 / BANDWIDTH                # about 65.1 ns
 NUM_SUBCARRIERS = 512                        # N, the DFT size
@@ -20,9 +14,7 @@ SNR = 10 ** (SNR_DB / 10)                    # linear scale, 1000
 # OFDM symbol used for the scatter plots of Task 5(c) (middle of the slot)
 PLOT_SYMBOL = 7
 
-# ---------------------------------------------------------------------------
-# Multipath channels (Table 1): non-zero tap indices and their powers
-# ---------------------------------------------------------------------------
+# Multipath channels (Table 1): non-zero tap delays and their powers
 CHANNEL_PROFILES = {
     1: {
         "tap_delays": [0, 1, 2, 4],
@@ -37,11 +29,7 @@ CHANNEL_PROFILES = {
 # CP length used in Task 5(d) ("insufficient CP")
 SHORT_CP_LENGTH = 4
 
-# ---------------------------------------------------------------------------
-# Random seeds. Each random block has its own generator, so the data and the
-# channel stay exactly the same when only the CP length is changed. Each
-# scenario has its own channel seed, so the two channels are independent.
-# ---------------------------------------------------------------------------
+# Random seeds: one generator per random block, so only the CP changes between runs
 DATA_SEED = 2026                     # 4-QAM data symbols
 CHANNEL_SEEDS = {1: 2027, 2: 2028}   # channel taps h of Scenario 1 and 2
 NOISE_SEED = 2029                    # receiver noise w

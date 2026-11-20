@@ -82,7 +82,7 @@ def analyse(signals, cp_length):
     """Return every number quoted in the report for one run."""
     noise_power = 1 / SNR
     channel_power = np.abs(signals.response) ** 2
-    # Averages use symbols 1-13: symbol 0 has nothing before it, so it sees only half the ISI + ICI
+    # Averages use symbols 1-13, because symbol 0 sees only half the ISI + ICI
     later_symbols = slice(1, NUM_OFDM_SYMBOLS)
 
     # ISI + ICI power per subcarrier predicted from the channel (zero if Ncp >= L - 1)

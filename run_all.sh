@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Reproduce every figure and number of the report.
-# Run from the project root:   bash run_all.sh
+# Reproduce every figure and number of the report; run from the project root: bash run_all.sh
 set -e
 export PYTHONDONTWRITEBYTECODE=1           # no __pycache__ folders
 

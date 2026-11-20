@@ -11,7 +11,7 @@ def complex_gaussian(size, variance, rng):
 
 
 def channel_taps(tap_delays, tap_powers, rng):
-    """Return one tap vector h of length L = last delay + 1, with h[l] ~ CN(0, sigma_l^2) at each delay."""
+    """Return one tap vector h of length L = last delay + 1, with h[l] ~ CN(0, sigma_l^2)."""
     taps = np.zeros(max(tap_delays) + 1, dtype=complex)
     for delay, power in zip(tap_delays, tap_powers):
         taps[delay] = complex_gaussian(1, power, rng)[0]

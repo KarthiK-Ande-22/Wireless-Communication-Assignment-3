@@ -1,4 +1,4 @@
-"""Figures of Task 5; each function makes one figure and saves it as PDF and PNG."""
+"""Figures of Task 5; each function makes one figure and saves it as PNG."""
 import sys
 from pathlib import Path
 

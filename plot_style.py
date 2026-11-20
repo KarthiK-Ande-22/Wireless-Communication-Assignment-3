@@ -1,7 +1,4 @@
-"""Common look of all figures, and one function to save them.
-
-The figures use Computer Modern, the font of the LaTeX report.
-"""
+"""Common figure style (Computer Modern font, as in the report) and a function to save figures."""
 from pathlib import Path
 
 import matplotlib
