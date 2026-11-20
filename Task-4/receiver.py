@@ -102,6 +102,6 @@ if __name__ == "__main__":
     lines.append(f"max |fft / sqrt(N) - F y_c| = {dft_error:.2e}")
 
     print("\n".join(lines))
-    results_folder = Path(__file__).resolve().parent / "results"
-    results_folder.mkdir(exist_ok=True)
+    results_folder = Path(__file__).resolve().parents[1] / "results" / "Task-4"
+    results_folder.mkdir(parents=True, exist_ok=True)
     (results_folder / "receiver_check.txt").write_text("\n".join(lines) + "\n")

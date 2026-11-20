@@ -103,6 +103,6 @@ if __name__ == "__main__":
     lines += check_convolution_and_noise(taps, SNR)
 
     print("\n".join(lines))
-    results_folder = Path(__file__).resolve().parent / "results"
-    results_folder.mkdir(exist_ok=True)
+    results_folder = Path(__file__).resolve().parents[1] / "results" / "Task-3"
+    results_folder.mkdir(parents=True, exist_ok=True)
     (results_folder / "channel_check.txt").write_text("\n".join(lines) + "\n")

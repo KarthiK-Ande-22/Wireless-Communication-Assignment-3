@@ -60,20 +60,20 @@ python3 Task-5/main.py --scenario S [--cp NCP]
 ```
 
 `S` is 1 or 2. Without `--cp` it uses the CP length designed in Task 1
-(Ncp = L - 1). The output goes to `Task-5/results/scenario<S>_cp<NCP>/`.
+(Ncp = L - 1). The output goes to `results/Task-5/scenario<S>_cp<NCP>/`.
 
 **Each task on its own** (these are the commands in `run_all.sh`):
 
 | Command | Reproduces | Output |
 |---|---|---|
-| `python3 Task-1/cp_design.py` | Task 1: CP length, overhead, SINR of shorter CPs, Monte Carlo check, Fig. 1 of the report | `Task-1/results/` |
-| `python3 Task-2/transmitter.py` | Task 2: check of every transmitter block, for Ncp = 4 and 75 | `Task-2/results/` |
-| `python3 Task-3/channel.py` | Task 3: the channel realization of each scenario and its checks | `Task-3/results/` |
-| `python3 Task-4/receiver.py` | Task 4: noise-free check of the whole link | `Task-4/results/` |
-| `python3 Task-5/main.py --scenario 1` | Task 5 (a)-(c), Scenario 1, Ncp = 4 | `Task-5/results/scenario1_cp4/` |
-| `python3 Task-5/main.py --scenario 2` | Task 5 (a)-(c), Scenario 2, Ncp = 75 | `Task-5/results/scenario2_cp75/` |
-| `python3 Task-5/main.py --scenario 2 --cp 4` | Task 5 (d), Scenario 2, Ncp = 4 | `Task-5/results/scenario2_cp4/` |
-| `python3 Task-5/cp_sweep.py` | extra: the link for every Ncp from 0 to 80 | `Task-5/results/cp_sweep/` |
+| `python3 Task-1/cp_design.py` | Task 1: CP length, overhead, SINR of shorter CPs, Monte Carlo check, Fig. 1 of the report | `results/Task-1/` |
+| `python3 Task-2/transmitter.py` | Task 2: check of every transmitter block, for Ncp = 4 and 75 | `results/Task-2/` |
+| `python3 Task-3/channel.py` | Task 3: the channel realization of each scenario and its checks | `results/Task-3/` |
+| `python3 Task-4/receiver.py` | Task 4: noise-free check of the whole link | `results/Task-4/` |
+| `python3 Task-5/main.py --scenario 1` | Task 5 (a)-(c), Scenario 1, Ncp = 4 | `results/Task-5/scenario1_cp4/` |
+| `python3 Task-5/main.py --scenario 2` | Task 5 (a)-(c), Scenario 2, Ncp = 75 | `results/Task-5/scenario2_cp75/` |
+| `python3 Task-5/main.py --scenario 2 --cp 4` | Task 5 (d), Scenario 2, Ncp = 4 | `results/Task-5/scenario2_cp4/` |
+| `python3 Task-5/cp_sweep.py` | extra: the link for every Ncp from 0 to 80 | `results/Task-5/cp_sweep/` |
 
 Each run of `main.py` writes seven figures, as `.pdf` (used in the report) and
 `.png`, and a `summary.txt` with every number of that run:
@@ -142,12 +142,12 @@ A simulation of the link over 1000 random channels agrees with the formula
 within 2.6 % (SINR within 0.1 dB).
 
 <p align="center">
-  <img src="Task-1/results/interference_vs_cp.png" width="70%" alt="Task 1: ISI + ICI power and SINR against the CP length">
+  <img src="results/Task-1/interference_vs_cp.png" width="70%" alt="Task 1: ISI + ICI power and SINR against the CP length">
 </p>
 
 ### Task 2: transmitter
 
-[Task-2/results/transmitter_check.txt](Task-2/results/transmitter_check.txt), for Ncp = 4 and 75:
+[results/Task-2/transmitter_check.txt](results/Task-2/transmitter_check.txt), for Ncp = 4 and 75:
 
 - 7168 4-QAM symbols with average energy E|s|² = 1.000000.
 - Grid mapping: d̃ᵢ[k] = s[Ni + k] at every position.
@@ -157,7 +157,7 @@ within 2.6 % (SINR within 0.1 dB).
 
 ### Task 3: channel
 
-[Task-3/results/channel_check.txt](Task-3/results/channel_check.txt). One realization per scenario:
+[results/Task-3/channel_check.txt](results/Task-3/channel_check.txt). One realization per scenario:
 
 | Scenario 1 tap l | σ²ₗ | h[l] | \|h[l]\|² |
 |---:|---:|---|---:|
@@ -186,7 +186,7 @@ the measured noise variance × SNR is 0.996.
 
 ### Task 4: receiver
 
-[Task-4/results/receiver_check.txt](Task-4/results/receiver_check.txt). One slot through the whole link without noise:
+[results/Task-4/receiver_check.txt](results/Task-4/receiver_check.txt). One slot through the whole link without noise:
 
 | | Ncp | max \|ỹ − H d̃\| | max \|ŝ − s\| |
 |---|---:|---:|---:|
@@ -247,46 +247,46 @@ interference (measured: 0.51).
 **Scenario 1, Ncp = 4**
 
 <p align="center">
-  <img src="Task-5/results/scenario1_cp4/channel_taps.png" width="40%" alt="Scenario 1: channel taps">
-  <img src="Task-5/results/scenario1_cp4/frequency_response.png" width="40%" alt="Scenario 1: frequency response">
+  <img src="results/Task-5/scenario1_cp4/channel_taps.png" width="40%" alt="Scenario 1: channel taps">
+  <img src="results/Task-5/scenario1_cp4/frequency_response.png" width="40%" alt="Scenario 1: frequency response">
 </p>
 <p align="center">
-  <img src="Task-5/results/scenario1_cp4/transmitted_signal.png" width="80%" alt="Scenario 1: transmitted signal">
-  <img src="Task-5/results/scenario1_cp4/amplitude_histogram.png" width="55%" alt="Scenario 1: amplitude histogram">
+  <img src="results/Task-5/scenario1_cp4/transmitted_signal.png" width="80%" alt="Scenario 1: transmitted signal">
+  <img src="results/Task-5/scenario1_cp4/amplitude_histogram.png" width="55%" alt="Scenario 1: amplitude histogram">
 </p>
 <p align="center">
-  <img src="Task-5/results/scenario1_cp4/received_symbols.png" width="40%" alt="Scenario 1: received symbols">
-  <img src="Task-5/results/scenario1_cp4/equalized_symbols.png" width="40%" alt="Scenario 1: equalized symbols">
+  <img src="results/Task-5/scenario1_cp4/received_symbols.png" width="40%" alt="Scenario 1: received symbols">
+  <img src="results/Task-5/scenario1_cp4/equalized_symbols.png" width="40%" alt="Scenario 1: equalized symbols">
 </p>
 
 **Scenario 2, Ncp = 75**
 
 <p align="center">
-  <img src="Task-5/results/scenario2_cp75/channel_taps.png" width="40%" alt="Scenario 2: channel taps">
-  <img src="Task-5/results/scenario2_cp75/frequency_response.png" width="40%" alt="Scenario 2: frequency response">
+  <img src="results/Task-5/scenario2_cp75/channel_taps.png" width="40%" alt="Scenario 2: channel taps">
+  <img src="results/Task-5/scenario2_cp75/frequency_response.png" width="40%" alt="Scenario 2: frequency response">
 </p>
 <p align="center">
-  <img src="Task-5/results/scenario2_cp75/transmitted_signal.png" width="80%" alt="Scenario 2: transmitted signal">
-  <img src="Task-5/results/scenario2_cp75/amplitude_histogram.png" width="55%" alt="Scenario 2: amplitude histogram">
+  <img src="results/Task-5/scenario2_cp75/transmitted_signal.png" width="80%" alt="Scenario 2: transmitted signal">
+  <img src="results/Task-5/scenario2_cp75/amplitude_histogram.png" width="55%" alt="Scenario 2: amplitude histogram">
 </p>
 <p align="center">
-  <img src="Task-5/results/scenario2_cp75/received_symbols.png" width="40%" alt="Scenario 2, Ncp = 75: received symbols">
-  <img src="Task-5/results/scenario2_cp75/equalized_symbols.png" width="40%" alt="Scenario 2, Ncp = 75: equalized symbols">
+  <img src="results/Task-5/scenario2_cp75/received_symbols.png" width="40%" alt="Scenario 2, Ncp = 75: received symbols">
+  <img src="results/Task-5/scenario2_cp75/equalized_symbols.png" width="40%" alt="Scenario 2, Ncp = 75: equalized symbols">
 </p>
 
 **Task 5(d): Scenario 2 with Ncp = 75 (left) and Ncp = 4 (right)**
 
 <p align="center">
-  <img src="Task-5/results/scenario2_cp75/received_symbols.png" width="40%" alt="Scenario 2, Ncp = 75: received symbols">
-  <img src="Task-5/results/scenario2_cp4/received_symbols.png" width="40%" alt="Scenario 2, Ncp = 4: received symbols">
+  <img src="results/Task-5/scenario2_cp75/received_symbols.png" width="40%" alt="Scenario 2, Ncp = 75: received symbols">
+  <img src="results/Task-5/scenario2_cp4/received_symbols.png" width="40%" alt="Scenario 2, Ncp = 4: received symbols">
 </p>
 <p align="center">
-  <img src="Task-5/results/scenario2_cp75/equalized_symbols.png" width="40%" alt="Scenario 2, Ncp = 75: equalized symbols">
-  <img src="Task-5/results/scenario2_cp4/equalized_symbols.png" width="40%" alt="Scenario 2, Ncp = 4: equalized symbols">
+  <img src="results/Task-5/scenario2_cp75/equalized_symbols.png" width="40%" alt="Scenario 2, Ncp = 75: equalized symbols">
+  <img src="results/Task-5/scenario2_cp4/equalized_symbols.png" width="40%" alt="Scenario 2, Ncp = 4: equalized symbols">
 </p>
 <p align="center">
-  <img src="Task-5/results/scenario2_cp75/equalization_error.png" width="80%" alt="Scenario 2, Ncp = 75: equalization error">
-  <img src="Task-5/results/scenario2_cp4/equalization_error.png" width="80%" alt="Scenario 2, Ncp = 4: equalization error">
+  <img src="results/Task-5/scenario2_cp75/equalization_error.png" width="80%" alt="Scenario 2, Ncp = 75: equalization error">
+  <img src="results/Task-5/scenario2_cp4/equalization_error.png" width="80%" alt="Scenario 2, Ncp = 4: equalization error">
 </p>
 
 ## Repository layout
@@ -310,14 +310,19 @@ interference (measured: 0.51).
 │   ├── main.py                  Task 5: main script for one scenario and CP length
 │   ├── plots.py                 the figures of Task 5
 │   └── cp_sweep.py              extra: link for every Ncp from 0 to 80
-│   (each Task-N/results/ folder holds the outputs of that task)
+├── results/                     all outputs, one folder per task
+│   ├── Task-1/                  cp_design.txt, Fig. 1 of the report
+│   ├── Task-2/                  transmitter_check.txt
+│   ├── Task-3/                  channel_check.txt
+│   ├── Task-4/                  receiver_check.txt
+│   └── Task-5/                  scenario1_cp4/, scenario2_cp75/, scenario2_cp4/, cp_sweep/
 └── Report/
     ├── report.tex
     └── report.pdf
 ```
 
-The report reads its figures directly from `Task-1/results/` and
-`Task-5/results/`, so after `bash run_all.sh` a new `pdflatex` run picks up
+The report reads its figures directly from `results/Task-1/` and
+`results/Task-5/`, so after `bash run_all.sh` a new `pdflatex` run picks up
 the new figures.
 
 ## How the code works

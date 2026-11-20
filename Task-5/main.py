@@ -21,7 +21,7 @@ from channel import channel_taps, frequency_response, multipath_channel
 from receiver import detect_symbols, ofdm_receiver
 import plots
 
-RESULTS_FOLDER = Path(__file__).resolve().parent / "results"
+RESULTS_FOLDER = PROJECT_ROOT / "results" / "Task-5"
 
 # y-axis (dB) of the equalization error plot; both Scenario 2 runs share it for comparison
 ERROR_PLOT_LIMITS = {1: (-60, -10), 2: (-60, 15)}

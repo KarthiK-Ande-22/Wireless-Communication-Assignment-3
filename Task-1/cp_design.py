@@ -37,7 +37,7 @@ from transmitter import generate_data, ofdm_transmitter
 from channel import channel_taps, frequency_response, multipath_channel
 from receiver import ofdm_receiver
 
-RESULTS_FOLDER = Path(__file__).resolve().parent / "results"
+RESULTS_FOLDER = Path(__file__).resolve().parents[1] / "results" / "Task-1"
 
 # 5G NR normal CP for 30 kHz subcarrier spacing: 2.34 us = 36 samples at 15.36 MHz
 NR_NORMAL_CP_LENGTH = 36
