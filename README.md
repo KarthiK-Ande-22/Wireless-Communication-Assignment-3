@@ -1,6 +1,6 @@
 # Design of an OFDM Link for a 5G NR-like Downlink
 
-**EC5.407 Wireless Communications — Assignment 3**<br>
+**EC5.407 Wireless Communications - Assignment 3**<br>
 Ande Karthik · 2023102009
 
 A simplified OFDM physical layer for the downlink of a 5G NR-like system,

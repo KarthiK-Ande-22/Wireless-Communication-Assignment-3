@@ -68,7 +68,7 @@ has to divide by $H[k]$ (one-tap equalizer). But the CP carries no new data, so 
 possible. Choosing its length is the main design question.
 
 % =====================================================================
-\section{Task 1 --- CP length}
+\section{Task 1 - CP length}
 \label{sec:task1}
 % =====================================================================
 
@@ -110,7 +110,7 @@ task requires, the same $\Ncp$ is used for all 14 OFDM symbols of the slot. The 
 
 \begin{table}[!htb]
   \centering
-  \caption{CP design (\texttt{Task-1/results/cp\_design.txt}). The rms delay spread is $\tau_{\mathrm{rms}}^2 = \sum_\ell \sigma_\ell^2 \ell^2 - (\sum_\ell \sigma_\ell^2 \ell)^2$ (in samples), and the coherence bandwidth uses the rule of thumb $B_c \approx 1/(5\tau_{\mathrm{rms}})$.}
+  \caption{CP design. The rms delay spread is $\tau_{\mathrm{rms}}^2 = \sum_\ell \sigma_\ell^2 \ell^2 - (\sum_\ell \sigma_\ell^2 \ell)^2$ (in samples), and the coherence bandwidth uses the rule of thumb $B_c \approx 1/(5\tau_{\mathrm{rms}})$.}
   \label{tab:cp}
   \begin{tabular}{lcc}
     \toprule
@@ -146,7 +146,7 @@ and Fig.~\ref{fig:interference} compare candidate CP lengths.
 
 \begin{table}[!htb]
   \centering
-  \caption{Candidate CP lengths, average over the channel (\texttt{Task-1/results/cp\_design.txt}).
+  \caption{Candidate CP lengths, average over the channel.
     Energy loss: $10\log_{10}((N + \Ncp)/N)$, the energy spent on the CP, which the receiver throws away.
     SINR from \eqref{eq:pint}; without ISI it equals the SNR, 30 dB.}
   \label{tab:candidates}
@@ -206,10 +206,10 @@ interference is zero.
 
 \FloatBarrier
 % =====================================================================
-\section{Task 2 --- Transmitter}
+\section{Task 2 - Transmitter}
 % =====================================================================
 
-The transmitter is in \texttt{Task-2/transmitter.py}. Each block of Fig.~2 is one function.
+Each block of Fig.~2 is one function of the transmitter.
 \begin{enumerate}[label=(\alph*)]
   \item \textbf{Data generation} (\texttt{generate\_data}). The 7168 data symbols are drawn at random,
         with equal probability, from the 4-QAM points $(\pm 1 \pm j)/\sqrt{2}$ of Assignment 2. Every
@@ -228,13 +228,13 @@ The transmitter is in \texttt{Task-2/transmitter.py}. Each block of Fig.~2 is on
         \end{itemize}
 \end{enumerate}
 Since $F$ is unitary, $\|d_i\|^2 = \|\dt_i\|^2 = N$, so the transmitted signal has average power 1.
-Running \texttt{transmitter.py} checks every block (output in \texttt{Task-2/results/}).
+Each block was tested on its own, for $\Ncp = 4$ and 75, and gives exactly the expected result.
 
 % =====================================================================
-\section{Task 3 --- Channel}
+\section{Task 3 - Channel}
 % =====================================================================
 
-The channel is in \texttt{Task-3/channel.py}.
+The channel has three functions.
 \begin{itemize}
   \item \textbf{Taps} (\texttt{channel\_taps}). For each scenario one tap vector $h$ is drawn, of length
         $L$ = last tap + 1 (5 in Scenario 1, 76 in Scenario 2). The taps of Table 1 are independent,
@@ -248,13 +248,12 @@ The channel is in \texttt{Task-3/channel.py}.
   \item \textbf{Frequency response} (\texttt{frequency\_response}). $H[k] = \texttt{fft}(h, N)$, used by
         the equalizer in Task 4.
 \end{itemize}
-Table~\ref{tab:taps} shows the two realizations; all results of Task 5 use them. Running
-\texttt{channel.py} checks every block (output in \texttt{Task-3/results/}).
+Table~\ref{tab:taps} shows the two realizations; all results of Task 5 use them. The convolution was
+also checked against the sum $y[m] = \sum_\ell h[\ell]\, x[m - \ell]$, and they agree exactly.
 
 \begin{table}[!htb]
   \centering
-  \caption{The channel realization of each scenario (\texttt{Task-3/results/channel\_check.txt}).
-    All other taps are zero.}
+  \caption{The channel realization of each scenario. All other taps are zero.}
   \label{tab:taps}
   \small
   \begin{tabular}[t]{rccc}
@@ -291,11 +290,10 @@ Table~\ref{tab:taps} shows the two realizations; all results of Task 5 use them.
 \end{table}
 
 % =====================================================================
-\section{Task 4 --- Receiver}
+\section{Task 4 - Receiver}
 % =====================================================================
 
-The receiver is in \texttt{Task-4/receiver.py}. It knows the channel taps $h$. Each block of Fig.~3
-is one function.
+The receiver knows the channel taps $h$. Each block of Fig.~3 is one function.
 \begin{enumerate}[label=(\alph*)]
   \item \textbf{OFDM demodulation.}
         \begin{itemize}
@@ -312,10 +310,10 @@ is one function.
   \item \textbf{Demapping} (\texttt{demap\_resource\_grid}). $\hat{s}[Ni + k] = \deq_i[k]$: the 14 columns
         are put one after the other, which undoes the mapping of Task 2(b).
 \end{enumerate}
-\textbf{Check.} \texttt{receiver.py} sends one slot through the whole link without noise. With
+\textbf{Check.} One slot was sent through the whole link without noise. With
 $\Ncp = L - 1$ the receiver gets $s$ back exactly ($\max|\hat{s} - s| \approx 10^{-15}$). With a CP only
 one sample shorter it does not: $\max|\hat{s} - s| = 0.025$ in Scenario 1 ($\Ncp = 3$) and 0.10 in
-Scenario 2 ($\Ncp = 74$). The output is in \texttt{Task-4/results/}.
+Scenario 2 ($\Ncp = 74$).
 
 \textbf{Noise after the equalizer.} With the CP of Task 1, \eqref{eq:flat} holds, so the equalized
 value is the data symbol plus the noise divided by $H[k]$:
@@ -341,11 +339,11 @@ so the expected number of errors in a slot is $14 \sum_k P_e(\SNR_k)$.
 
 \FloatBarrier
 % =====================================================================
-\section{Task 5 --- Results}
+\section{Task 5 - Results}
 % =====================================================================
 
-All figures are made by \texttt{python3 Task-5/main.py -{}-scenario S [-{}-cp Ncp]}. Every run sends the
-same data, and the runs of one scenario use the same channel and noise. In (c), OFDM symbol $i = 7$ is
+All figures are made by the main script, which takes the scenario and the CP length as inputs. Every
+run sends the same data, and the runs of one scenario use the same channel and noise. In (c), OFDM symbol $i = 7$ is
 shown, and the colour of each point is $|H[k]|^2$ of its subcarrier. All equalized plots use the same
 axes. Each run has one extra figure: the error after the equalizer on every subcarrier, next to its
 expected value \eqref{eq:eqnoise}.
@@ -566,7 +564,7 @@ again at $m = 512 + 63 = 575$. The average power is 0.9946 instead of exactly 1,
 
 \begin{table}[!htb]
   \centering
-  \caption{Both scenarios with the designed CP (\texttt{summary.txt} of each run).}
+  \caption{Both scenarios with the designed CP.}
   \label{tab:compare}
   \small
   \begin{tabular}{lcc}
@@ -678,8 +676,8 @@ Table~\ref{tab:short}).
 
 \begin{table}[!htb]
   \centering
-  \caption{Scenario 2 with the designed and with a too short CP: same data, same channel
-    (\texttt{summary.txt} of each run). $^*$The 226 subcarriers with $|H[k]|^2 \ge 0$ dB.}
+  \caption{Scenario 2 with the designed and with a too short CP: same data, same channel.
+    $^*$The 226 subcarriers with $|H[k]|^2 \ge 0$ dB.}
   \label{tab:short}
   \small
   \begin{tabular}{lcc}
